@@ -29,18 +29,12 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
 endif()
 
 
-# Find nlohmann_json to parse json files
-# Add nlohmann_json::nlohmann_json to target_link_libraries
-find_package(nlohmann_json REQUIRED)
 
-set(fxhedging_hdrs  src/json_reader.hpp)
-add_library(fx_hedging src/json_reader.cpp ${fxhedging_hdrs})
-target_link_libraries(fx_hedging ${PNL_LIBRARIES} nlohmann_json::nlohmann_json)
 
 ### Ne rien modifier dans la partie au dessus de cette ligne.
 
 add_executable(test_json_reader src/json_reader.cpp src/test_json_reader.cpp)
-target_link_libraries(test_json_reader ${PNL_LIBRARIES} nlohmann_json::nlohmann_json)
+target_link_libraries(test_json_reader ${PNL_LIBRARIES})
 pnl_add_postbuild(test_json_reader)
 
 # Print compiler flags

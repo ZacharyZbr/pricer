@@ -1,7 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include "json_reader.hpp"
-
+#include "Asset.h"
+#include "pnl/pnl_vector.h"
 
 int main(int argc, char **argv) {
     if (argc != 2) {
