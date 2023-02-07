@@ -7,5 +7,4 @@ Currency::Currency(double drift, PnlVect* volatilityVector,
 	this->domesticInterestRate_ = domesticInterestRate;
 	this->foreignInterestRate_ = foreignInterestRate;
 
-
 }
