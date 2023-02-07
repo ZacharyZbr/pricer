@@ -2,7 +2,8 @@
 #include "Asset.h"
 
 Asset::Asset(double drift, PnlVect* volatilityVector, double domesticInterestRate) {
-	RiskyAsset(drift, volatilityVector);
+	this->drift_ = drift;
+	this->volatilityVector_ = volatilityVector;
 	this->domesticInterestRate = domesticInterestRate;
 }
 

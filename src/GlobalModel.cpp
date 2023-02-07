@@ -5,5 +5,5 @@ GlobalModel::GlobalModel(int nbCurrencies, vector<int> nbOfAssets,
 	this->assets_ = assets;
 	this->currencies_ = currencies;
 	this->nbCurrencies_ = nbCurrencies;
-	this->nbOfAssets_ = nbOfAssets
+	this->nbOfAssets_ = nbOfAssets;
 }

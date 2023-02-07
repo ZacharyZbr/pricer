@@ -3,10 +3,11 @@
 #include "Option.h"
 #include "GlobalModel.h"
 #include "pnl/pnl_random.h"
+#include "pnl/pnl_vector.h"
 
 class MonteCarlo
 {
-  public:
+public:
     GlobalModel* mod_; /*! pointeur vers le modèle */
     Option* opt_;            /*! pointeur sur l'option */
     PnlRng* rng_;            /*! pointeur sur le générateur */
@@ -21,6 +22,8 @@ class MonteCarlo
 
     ~MonteCarlo();
 
+    //void PriceAndDelta(PnlMat* Past, double t, double& prix, double& std_dev, PnlVect* delta, PnlVect* std_deltas);
+
     /**
      * Calcule le prix de l'option à la date t
      *
@@ -32,9 +35,7 @@ class MonteCarlo
      * @param[out] deltas contient les deltas
      * @param[out] std_deltas contient l'écart type des deltas
      */
-    void priceAndDelta(PnlMat* Past; double t; double& prix, double& std_dev, PnlVect* deltas, PnlVect* std_deltas);
+    void priceAndDelta(PnlMat* Past, double t, double& prix,
+        double& std_dev, PnlVect* deltas, PnlVect* std_deltas);
 
-    
-
-
-}
+};
