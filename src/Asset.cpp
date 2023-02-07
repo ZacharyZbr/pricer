@@ -8,7 +8,7 @@ Asset::Asset(double drift, PnlVect* volatilityVector, double domesticInterestRat
 }
 
 void Asset::simulate(PnlVect* path, PnlVect* currencyVolatilityVector, 
-					 double spot, double T, int nbTimeStep, PnlVect* G)
+					 double spot,  double T, int nbTimeStep, PnlMat* G)
 {
 	int nbDates = path->size;
 	double step = T / nbTimeStep;
