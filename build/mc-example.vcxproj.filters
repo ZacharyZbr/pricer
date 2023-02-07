@@ -7,8 +7,10 @@
     <ClCompile Include="C:\Users\Zachary\Documents\3A\pricer-multi-devises\src\3rdparty\jlparser\parser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MultiCurrencyMarket.cpp" />
-    <ClCompile Include="BlackScholesModel.cpp" />
+    <ClCompile Include="greg.cpp" />
+    <ClCompile Include="..\src\BlackScholesModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="C:\Users\Zachary\Documents\3A\pricer-multi-devises\CMakeLists.txt" />
@@ -19,7 +21,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MultiCurrencyMarket.h" />
-    <ClInclude Include="BlackScholesModel.h" />
+    <ClInclude Include="greg.h" />
+    <ClInclude Include="..\src\BlackScholesModel.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
