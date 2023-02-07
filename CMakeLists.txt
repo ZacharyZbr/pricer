@@ -43,6 +43,10 @@ add_executable(test_json_reader src/json_reader.cpp src/test_json_reader.cpp)
 target_link_libraries(test_json_reader ${PNL_LIBRARIES} nlohmann_json::nlohmann_json)
 pnl_add_postbuild(test_json_reader)
 
+add_executable(mc_example src/json_reader.cpp src/mc_example.cpp)
+target_link_libraries(mc_example ${PNL_LIBRARIES} nlohmann_json::nlohmann_json)
+pnl_add_postbuild(mc_example)
+
 # Print compiler flags
 get_directory_property(DirDefs COMPILE_DEFINITIONS)
 message(STATUS "COMPILE_DEFINITIONS = ${DirDefs}")
