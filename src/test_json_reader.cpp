@@ -8,7 +8,8 @@
 #include "CallCurrency.h"
 #include "CallQuanto.h"
 #include <vector>
-
+#include "Asset.h"
+#include "pnl/pnl_vector.h"
 
 int main(int argc, char **argv) {
     if (argc != 2) {

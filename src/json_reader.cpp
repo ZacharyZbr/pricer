@@ -4,6 +4,7 @@
 #include <vector>
 #include "json_reader.hpp"
 
+
 void from_json(const nlohmann::json &j, PnlVect *&vect) {
     std::vector<double> stl_v = j.get<std::vector<double>>();
     vect = pnl_vect_create_from_ptr(stl_v.size(), stl_v.data());
