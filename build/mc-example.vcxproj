@@ -317,8 +317,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BlackScholesModel.cpp" />
     <ClCompile Include="C:\Users\Zachary\Documents\3A\pricer-multi-devises\src\mc_example.cpp" />
     <ClCompile Include="C:\Users\Zachary\Documents\3A\pricer-multi-devises\src\3rdparty\jlparser\parser.cpp" />
+    <ClCompile Include="MultiCurrencyMarket.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="C:\Users\Zachary\Documents\3A\pricer-multi-devises\build\ZERO_CHECK.vcxproj">
@@ -327,6 +329,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BlackScholesModel.h" />
+    <ClInclude Include="MultiCurrencyMarket.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

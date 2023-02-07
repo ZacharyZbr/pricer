@@ -7,6 +7,8 @@
     <ClCompile Include="C:\Users\Zachary\Documents\3A\pricer-multi-devises\src\3rdparty\jlparser\parser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MultiCurrencyMarket.cpp" />
+    <ClCompile Include="BlackScholesModel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="C:\Users\Zachary\Documents\3A\pricer-multi-devises\CMakeLists.txt" />
@@ -15,5 +17,9 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{74465BEC-A139-331A-A1AE-B123EACCADE7}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MultiCurrencyMarket.h" />
+    <ClInclude Include="BlackScholesModel.h" />
   </ItemGroup>
 </Project>
