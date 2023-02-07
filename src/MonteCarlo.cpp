@@ -1,8 +1,13 @@
 #include <iostream>
+#include "MonteCarlo.h"
+#include "GlobalModel.h"
+#include "Option.h"
+#include "pnl/pnl_vector.h"
+#include "pnl/pnl_random.h"
 
 using namespace std;
 
-MonteCarlo::MonteCarlo(GlobalMarket* mod, Option* opt, PnlRng* rng, double fdStep, long nbSamples){
+MonteCarlo::MonteCarlo(GlobalModel* mod, Option* opt, PnlRng* rng, double fdStep, long nbSamples){
       this->mod_ = mod; 
       this->opt_ = opt; 
       this->rng_ = rng; 
@@ -17,6 +22,6 @@ MonteCarlo::~MonteCarlo(){
     pnl_mat_free(&this->path_);
   }
 
-MonteCarlo::PriceAndDelta(PnlMat* Past; double t; double& prix, double& std_dev, PnlVect* delta, PnlVect* std_deltas){
+void MonteCarlo::priceAndDelta(PnlMat* Past, double t, double& prix, double& std_dev, PnlVect* delta, PnlVect* std_deltas){
 
 }
