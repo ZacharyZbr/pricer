@@ -17,9 +17,9 @@ void Currency::simulate(PnlVect* path, double spot, double T, int nbTimeStep, Pn
 	double step = T / nbTimeStep;
 	pnl_vect_set(path, 0, spot);
 	for (int i = 1; i < nbDates; i++) {
-		spot = spot * exp((domesticInterestRate_ - 0.5 * pnl_vect_scalar_prod(volatilityVector_, volatilityVector_)) * step
-			+ sqrt(step) * pnl_vect_scalar_prod(volatilityVector_, G));
-		pnl_vect_set(path, i, spot);
+		//spot = spot * exp((domesticInterestRate_ - 0.5 * pnl_vect_scalar_prod(volatilityVector_, volatilityVector_)) * step
+		//	+ sqrt(step) * pnl_vect_scalar_prod(volatilityVector_, G));
+		//pnl_vect_set(path, i, spot);
 	}
 	
 }
