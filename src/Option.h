@@ -13,7 +13,7 @@ class Option
     double T_;        /// maturité
     int nbTimeSteps_; /// nombre de pas de temps de discrétisation
     int size_;        /// dimension du modèle, redondant avec BlackScholesModel::size_
-    PnlVect* assetCurrencyMapping; ///Vecteur de nombre d'asset par devises. 
+    PnlVect* assetCurrencyMapping_; ///Vecteur de nombre d'asset par devises. 
 
     /**
      * Calcule la valeur du payoff sur la trajectoire
