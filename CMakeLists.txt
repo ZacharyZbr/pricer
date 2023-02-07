@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(pricer CXX)
+project(FXHedging CXX)
 
 # Prefix
 if (NOT PREFIX)
@@ -28,27 +28,20 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
     add_definitions(-DPNL_RANGE_CHECK_OFF)
 endif()
 
-# Add jlparser
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-if (WIN32)
-    include(CheckCXXCompilerFlag)
-    CHECK_CXX_COMPILER_FLAG("/std:c++latest" _cpp_latest_flag_supported)
-    if (_cpp_latest_flag_supported)
-        add_compile_options("/std:c++latest")
-    endif()
-endif()
-add_subdirectory(src/3rdparty/jlparser)
+
+# Find nlohmann_json to parse json files
+# Add nlohmann_json::nlohmann_json to target_link_libraries
+find_package(nlohmann_json REQUIRED)
+
+set(fxhedging_hdrs  src/json_reader.hpp)
+add_library(fx_hedging src/json_reader.cpp ${fxhedging_hdrs})
+target_link_libraries(fx_hedging ${PNL_LIBRARIES} nlohmann_json::nlohmann_json)
 
 ### Ne rien modifier dans la partie au dessus de cette ligne.
 
-# Test the parser
-add_executable(test-parser src/test_parser.cpp)
-target_link_libraries(test-parser jl_parser ${LIBS})
-
-add_executable(mc-example src/mc_example.cpp)
-target_link_libraries(mc-example jl_parser ${LIBS})
+add_executable(test_json_reader src/json_reader.cpp src/test_json_reader.cpp)
+target_link_libraries(test_json_reader ${PNL_LIBRARIES} nlohmann_json::nlohmann_json)
+pnl_add_postbuild(test_json_reader)
 
 # Print compiler flags
 get_directory_property(DirDefs COMPILE_DEFINITIONS)
