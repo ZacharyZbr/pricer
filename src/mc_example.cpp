@@ -7,7 +7,7 @@ using namespace std;
 
 int main()//int argc, char **argv)
 {
-    cout << "Hellow World!" << endl;
+    cout << "Hellow greg!" << endl;
     
 
     exit(0);

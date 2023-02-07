@@ -318,6 +318,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\BlackScholesModel.cpp" />
+    <ClCompile Include="..\src\MultiCurrencyMarket.cpp" />
     <ClCompile Include="C:\Users\Zachary\Documents\3A\pricer-multi-devises\src\mc_example.cpp" />
     <ClCompile Include="C:\Users\Zachary\Documents\3A\pricer-multi-devises\src\3rdparty\jlparser\parser.cpp" />
     <ClCompile Include="greg.cpp" />
@@ -332,6 +333,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\BlackScholesModel.h" />
+    <ClInclude Include="..\src\MultiCurrencyMarket.h" />
     <ClInclude Include="greg.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

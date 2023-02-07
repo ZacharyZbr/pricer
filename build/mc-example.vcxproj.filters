@@ -11,6 +11,9 @@
     <ClCompile Include="..\src\BlackScholesModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\MultiCurrencyMarket.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="C:\Users\Zachary\Documents\3A\pricer-multi-devises\CMakeLists.txt" />
@@ -23,6 +26,9 @@
   <ItemGroup>
     <ClInclude Include="greg.h" />
     <ClInclude Include="..\src\BlackScholesModel.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MultiCurrencyMarket.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

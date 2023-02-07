@@ -5,6 +5,8 @@
 #include "pnl/pnl_random.h"
 #include "MultiCurrencyMarket.h"
 
+
+
 class BlackScholesModel
 {
 	MultiCurrencyMarket *Market_;
