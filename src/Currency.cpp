@@ -11,7 +11,7 @@ Currency::Currency(double drift, PnlVect* volatilityVector,
 
 }
 
-void Currency::simulate(PnlVect* path, double spot, double T, int nbTimeStep, PnlVect*G)
+void Currency::simulate(PnlVect* path, double spot, double T, int nbTimeStep, PnlMat*G)
 {
 	int nbDates = path->size;
 	double step = T / nbTimeStep;
