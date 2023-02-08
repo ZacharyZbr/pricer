@@ -23,203 +23,33 @@ int main(int argc, char **argv) {
     std::ifstream ifs(argv[1]);
 
     nlohmann::json jsonParams = nlohmann::json::parse(ifs);
-    int numberOfDaysPerYear1 = jsonParams.at("NumberOfDaysInOneYear").get<int>();
-    double maturity1 = jsonParams.at("Option").at("MaturityInDays").get<int>() / double (numberOfDaysPerYear1);
-
-    GlobalModel* model1 = new GlobalModel();
-    MonteCarlo* mc1 = new MonteCarlo();
-    PnlMat* past1 = parsefile(jsonParams, model1, mc1);
-    pnl_mat_print(past1);
-    double price1;
-    double std_dev1;
-    PnlVect* deltas1 = pnl_vect_create(past1->n);
-    PnlVect* stdDeltas1 = pnl_vect_create(past1->n);
-
-    double t1 = 0.5;
-    mc1->priceAndDelta(past1, t1, maturity1, price1, std_dev1, deltas1, stdDeltas1);
-
-    std::cout << "price1 : " << price1 << std::endl;
-    //PnlMat *market = pnl_mat_create_from_file(argv[2]);
-
-<<<<<<< HEAD
-=======
-    // Matrice de correlation
-    PnlMat *correlation;
-    jsonParams.at("Correlations").get_to(correlation);
-    std::cout << "Matrice de Correlation : " << std::endl;
-    pnl_mat_print(correlation);
-
-    // Matrice de cholesky
-    std::cout << "Matrice de cholesky : "  << std::endl;
-    pnl_mat_chol(correlation);
-    pnl_mat_print(correlation);
-
-    std::string domesticCurrencyId;
-    jsonParams.at("DomesticCurrencyId").get_to(domesticCurrencyId);
-    std::cout << "Domestic ID : " << domesticCurrencyId << std::endl;
-    int assetNb = jsonParams.at("Assets").size();
-    std::cout << "Number of assets " << assetNb << std::endl;
-
-    std::cout << "-- currencies" << std::endl;
-    auto jsonCurrencies = jsonParams.at("Currencies");
-    int currencyNb = jsonCurrencies.size();
-    std::cout << "Number of currency " << currencyNb << std::endl;
-    double domesticRate = 0;
-    double indiceCurrency = 0;
-    vector<Currency> CurrencyVector; 
-    for (auto jsonCurrency : jsonCurrencies) {
-        std::string CurrencyId;
-        jsonCurrency.at("id").get_to(CurrencyId);
-        double rf = jsonCurrency.at("InterestRate").get<double>();
-        if (CurrencyId == domesticCurrencyId){
-            domesticRate =  rf;
-        }
-        else{
-            indiceCurrency ++;
-            PnlVect* volatilityVector = pnl_vect_create(correlation->n);
-            pnl_mat_get_row(volatilityVector, correlation, correlation->m - currencyNb + indiceCurrency);
-            std::string currencyId(jsonCurrency.at("id").get<std::string>());
-            double realVolatility = jsonCurrency.at("Volatility").get<double>();
-            std::cout << "interest rate " << rf << std::endl;
-            std::cout << "real volatility " << realVolatility << std::endl;
-            pnl_vect_mult_scalar(volatilityVector,realVolatility);
-            Currency* myCurrency = new Currency(domesticRate, volatilityVector, domesticRate, rf);
-            CurrencyVector.push_back(*myCurrency);
-        }
-        
-        // regarder volatilyty vector pour Domestic currency
-    }
-    for (int i=0; i<CurrencyVector.size(); i++){
-        CurrencyVector.at(i).drift_ = domesticRate;
-        CurrencyVector.at(i).domesticInterestRate_ = domesticRate;
-    }
-
-    std::cout << "domestic interest rate " << domesticRate << std::endl;
-
-    std::cout << "-- assets" << std::endl;
-
-    vector<Asset> AssetVector; 
-    auto jsonAssets = jsonParams.at("Assets");
-    double indiceAsset = 0;
-    vector<int> nbOfAsset;
-    for(int i=0; i<currencyNb; i++){
-        nbOfAsset.push_back(0);
-    }
-    //nbOfAsset.at(0)++;
-    //std::cout << " test " <<  nbOfAsset.at(0) << std::endl;
-    string currentCurrency = domesticCurrencyId;
-    int currentindiceOfAsset = 0;
-    for (auto jsonAsset : jsonAssets) {
-        indiceAsset ++;
-        PnlVect* volatilityVector = pnl_vect_create(correlation->n);
-        pnl_mat_get_row(volatilityVector, correlation, indiceAsset -1 );
-        std::string currencyId(jsonAsset.at("CurrencyId").get<std::string>());
-        double realVolatility = jsonAsset.at("Volatility").get<double>();
-        std::cout << "currency " << currencyId << std::endl;
-        std::cout << "real volatility " << realVolatility << std::endl;
-        pnl_vect_mult_scalar(volatilityVector,realVolatility);
-        Asset* myAsset= new Asset(domesticRate, volatilityVector, domesticRate);
-        AssetVector.push_back(*myAsset);
-        if(currencyId==currentCurrency){
-            nbOfAsset.at(currentindiceOfAsset)++;
-        }
-        else{
-            currentindiceOfAsset++;
-            nbOfAsset.at(currentindiceOfAsset)++;
-            currentCurrency = currencyId;
-        }
-    }
-
-    for(int i=0; i<currencyNb; i++){
-        std::cout << " Nombre d'asset par devise " <<  nbOfAsset.at(i) << std::endl;
-    }
-
     int numberOfDaysPerYear = jsonParams.at("NumberOfDaysInOneYear").get<int>();
     double maturity = jsonParams.at("Option").at("MaturityInDays").get<int>() / double (numberOfDaysPerYear);
-    std::string label = jsonParams.at("Option").at("Type").get<std::string>();
-    std::cout << "Type option : " << label << std::endl;
-    std::cout << "Maturité : " << maturity << std::endl;
-    std::cout << "numberOfDaysPerYear : " << numberOfDaysPerYear << std::endl;
 
-    PnlMat* path;
-    Option* myOption;
-    double step;
-    double fdStep = jsonParams.at("RelativeFiniteDifferenceStep").get<double>();
-    int NSample = jsonParams.at("SampleNb").get<int>();
-
-
-    if(label == "foreign_asian"){
-        double period = jsonParams.at("Option").at("FixingDatesInDays").at("Period").get<double>();
-        step = period/numberOfDaysPerYear;
-        double nbTimeStep = jsonParams.at("Option").at("MaturityInDays").get<double>()/period;
-        myOption = new ForeignAsian(maturity,nbTimeStep,nbOfAsset);
-        path = pnl_mat_create(nbTimeStep+1, assetNb+currencyNb-1);
-        pnl_mat_set(path,0,0,10);
-        pnl_mat_set(path,0,1,10);
-        pnl_mat_set(path,0,2,1.05);
-    }
-    else if(label == "call_currency"){
-        double strike = jsonParams.at("Option").at("Strike").get<double>();
-        Currency* foreign = &CurrencyVector.at(0);
-        myOption = new CallCurrency(maturity,1,nbOfAsset,strike,foreign->foreignInterestRate_ );
-        path = pnl_mat_create(2, assetNb+currencyNb-1);
-        pnl_mat_set(path,0,0,10);
-        step = maturity;
-    }
-    else if(label == "quanto_exchange"){
-        double strike = jsonParams.at("Option").at("Strike").get<double>();
-        myOption = new QuantoExchange(maturity,1,nbOfAsset,strike);
-        path = pnl_mat_create(2, assetNb+currencyNb-1);
-        pnl_mat_set(path,0,0,2*strike);
-        pnl_mat_set(path,0,1,strike);
-        pnl_mat_set(path,0,1,1.05);
-        step = maturity;
-    }
-    else if(label =="call_quanto"){
-        double strike = jsonParams.at("Option").at("Strike").get<double>();
-        myOption = new CallQuanto(maturity,1,nbOfAsset,strike);
-        path = pnl_mat_create(2, assetNb+currencyNb-1);
-        pnl_mat_set(path,0,0,strike);
-        pnl_mat_set(path,0,1,1.05);
-        pnl_mat_set(path,1,0,strike +.01);
-        pnl_mat_set(path,1,1,1.06);
-        step = maturity;
-    }
-    else if(label =="call_vanille"){
-        double strike = jsonParams.at("Option").at("Strike").get<double>();
-        myOption = new Call(maturity,1,nbOfAsset,strike);
-        path = pnl_mat_create(2, assetNb+currencyNb-1);
-        pnl_mat_set(path,0,0,strike);
-        pnl_mat_set(path,1,0,strike +.01);
-        step = maturity;
-    }
-
-    GlobalModel* model = new GlobalModel(currencyNb-1, nbOfAsset, AssetVector, CurrencyVector, domesticRate);
-    PnlRng* pnl_rng = pnl_rng_create(PNL_RNG_MERSENNE);
-    pnl_rng_sseed(pnl_rng, time(NULL));
-
-    MonteCarlo* mc = new MonteCarlo(model, myOption, pnl_rng, fdStep, NSample, step);
+    GlobalModel* model = new GlobalModel();
+    MonteCarlo* mc = new MonteCarlo();
+    PnlMat* past = parsefile(jsonParams, model, mc);
+    pnl_mat_print(past);
     double price;
     double std_dev;
-    PnlVect* deltas = pnl_vect_create_from_zero(assetNb);
-    PnlVect* stdDeltas = pnl_vect_create(assetNb);
+    PnlVect* deltas = pnl_vect_create(past->n);
+    PnlVect* stdDeltas = pnl_vect_create(past->n);
 
     double t = 0.5;
 
-    mc->priceAndDelta(path, t, maturity, price, std_dev, deltas, stdDeltas);
+    std::cout << "nsample : " << mc->nbSamples_ << std::endl;
+
+    mc->priceAndDelta(past, t, maturity, price, std_dev, deltas, stdDeltas);
 
     std::cout << "price : " << price << std::endl;
+    //PnlMat *market = pnl_mat_create_from_file(argv[2]);
     std::cout << "deltas : " << std::endl;
    
     pnl_vect_print(deltas);
-
-
-
-    pnl_mat_free(&correlation);
     pnl_vect_free(&deltas);
     pnl_vect_free(&stdDeltas);
     delete model;
     delete mc;
->>>>>>> 1fe36ac40cc6bca18a1cd5246144c9bbce5bb5b7
+
     std::exit(0);
 }

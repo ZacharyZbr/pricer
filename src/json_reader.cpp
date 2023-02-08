@@ -196,7 +196,7 @@ PnlMat* parsefile(const nlohmann::json &jsonParams, GlobalModel* model, MonteCar
         step = maturity;
     }
 
-    model->set(currencyNb, nbOfAsset, AssetVector, CurrencyVector,domesticRate );
+    model->set(currencyNb-1, nbOfAsset, AssetVector, CurrencyVector,domesticRate );
 
     PnlRng* pnl_rng = pnl_rng_create(PNL_RNG_MERSENNE);
     pnl_rng_sseed(pnl_rng, time(NULL));
