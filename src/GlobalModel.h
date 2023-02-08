@@ -3,7 +3,7 @@
 #include <vector>
 #include "Asset.h"
 #include "Currency.h"
-#include "pnl/pnl_matrix.h"
+
 
 using namespace std;
 
@@ -31,8 +31,7 @@ public:
 	* Simulates the trajectories for all the underlying assets 
 	* and exchange rates in the multi-currency market 
 	* @param[out] *path matrix of size ( nbTimeSteps \times sum(nbOfAssets) + \hat(n)) in which we store the simulations
-	* @param[in] T maturity
-	* @param[in] nbTimeSteps
+	* @param[in] step time difference between two dates in the temporal subdiv grid
 	* @param[in] *rng
 	* /!\ *path contient tous les bons spots pour le moment 
 	*/
