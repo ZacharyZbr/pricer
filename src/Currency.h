@@ -16,11 +16,13 @@ public:
 
 	/*
 	* Simulates the asset on a given temporal subdivision grid
+	* 
+	* The spot price is stored at index 0 of the vect *path
+	* 
 	* @param[out] *path the simulation on the temporal grid
-	* @param[in] spot spot price of the asset
 	* @param[in] step time difference between two dates in the temporal subdiv grid
 	* @param[in] *G Normal vector that corresponds to the Brownian Motion
 	*/
-	void simulate(PnlVect* path, double spot, double step, PnlMat *G);
+	void simulate(PnlVect* path, double step, PnlMat *G);
 
 };

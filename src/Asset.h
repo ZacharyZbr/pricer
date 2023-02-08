@@ -18,12 +18,14 @@ public:
 
 	/**
 	* Simulates the dynamic X\times S which represents the foreign asset
-	* in the domestic market
+	* in the domestic market. 
+	* 
+	* The spot price is stored at index 0 of the vect *path
+	* 
 	* @param[in] *currencyVolatilityVector the vol vector of the currency X
-	* @param[in] spot the spot price of the foreign asset in the domestic market
 	* @param[in] step time difference between two dates in the temporal subdiv grid
 	*/
 	void simulate(PnlVect* path, PnlVect* currencyVolatilityVector,
-				 double spot, double step, PnlMat* G);
+				  double step, PnlMat* G);
 
 };

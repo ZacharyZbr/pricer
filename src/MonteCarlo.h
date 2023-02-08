@@ -13,12 +13,13 @@ public:
     PnlRng* rng_;            /*! pointeur sur le générateur */
     PnlMat* path_;
     double fdStep_;          /*! pas de différence finie */
-    long nbSamples_;         /*! nombre de tirages Monte Carlo */
+    int nbSamples_;         /*! nombre de tirages Monte Carlo */
+    double step_;
 
     /**
      * Constructeur de la classe
      */
-    MonteCarlo(GlobalModel*, Option*, PnlRng*, double, long);
+    MonteCarlo(GlobalModel*, Option*, PnlRng*, double, int, double);
 
     ~MonteCarlo();
 
@@ -35,7 +36,7 @@ public:
      * @param[out] deltas contient les deltas
      * @param[out] std_deltas contient l'écart type des deltas
      */
-    void priceAndDelta(PnlMat* Past, double t, double& prix,
+    void priceAndDelta(PnlMat* Past, double t, double T, double& prix,
         double& std_dev, PnlVect* deltas, PnlVect* std_deltas);
 
 };

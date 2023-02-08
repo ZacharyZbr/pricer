@@ -10,6 +10,7 @@
 #include <vector>
 #include "Asset.h"
 #include "pnl/pnl_vector.h"
+#include "pnl/pnl_matrix.h"
 
 int main(int argc, char **argv) {
     if (argc != 2) {
@@ -21,6 +22,11 @@ int main(int argc, char **argv) {
 
     PnlMat *correlation;
     jsonParams.at("Correlations").get_to(correlation);
+    std::cout << "Matrice de Correlation : " << std::endl;
+    pnl_mat_print(correlation);
+
+    std::cout << "Matrice de cholesky : "  << std::endl;
+    pnl_mat_chol(correlation);
     pnl_mat_print(correlation);
 
     std::string domesticCurrencyId;
@@ -67,8 +73,13 @@ int main(int argc, char **argv) {
     auto jsonAssets = jsonParams.at("Assets");
     double indiceAsset = 0;
     vector<int> nbOfAsset;
-    string currentCurrency = "";
-    int currentNbOfAsset = 0;
+    for(int i=0; i<currencyNb; i++){
+        nbOfAsset.push_back(0);
+    }
+    //nbOfAsset.at(0)++;
+    //std::cout << " test " <<  nbOfAsset.at(0) << std::endl;
+    string currentCurrency = domesticCurrencyId;
+    int currentindiceOfAsset = 0;
     for (auto jsonAsset : jsonAssets) {
         indiceAsset ++;
         PnlVect* volatilityVector = pnl_vect_create(correlation->n);
@@ -81,30 +92,42 @@ int main(int argc, char **argv) {
         Asset* myAsset= new Asset(domesticRate, volatilityVector, domesticRate);
         AssetVector.push_back(*myAsset);
         if(currencyId==currentCurrency){
-            currentNbOfAsset ++; 
-        }
-        else if (currentCurrency==""){
-            currentCurrency = currencyId;
-            currentNbOfAsset ++; 
+            nbOfAsset.at(currentindiceOfAsset)++;
         }
         else{
-            nbOfAsset.push_back(currentNbOfAsset);
-            currentNbOfAsset = 1;
+            currentindiceOfAsset++;
+            nbOfAsset.at(currentindiceOfAsset)++;
             currentCurrency = currencyId;
         }
+    }
+
+    for(int i=0; i<currencyNb; i++){
+        std::cout << " test " <<  nbOfAsset.at(i) << std::endl;
     }
 
     int numberOfDaysPerYear = jsonParams.at("NumberOfDaysInOneYear").get<int>();
     double maturity = jsonParams.at("Option").at("MaturityInDays").get<int>() / double (numberOfDaysPerYear);
     std::string label = jsonParams.at("Option").at("Type").get<std::string>();
     std::cout << "Type option : " << label << std::endl;
+    std::cout << "Maturité : " << maturity << std::endl;
+    std::cout << "numberOfDaysPerYear : " << numberOfDaysPerYear << std::endl;
 
+    PnlMat* path;
     Option* myOption;
+    double step;
+    double fdStep = jsonParams.at("RelativeFiniteDifferenceStep").get<double>();
+    int NSample = jsonParams.at("SampleNb").get<int>();
+
     if(label == "foreign_asian"){
 
     }
     else if(label == "call_currency"){
-        //myOption = new CallCurrency(maturity,)
+        double strike = jsonParams.at("Option").at("Strike").get<double>();
+        Currency* foreign = &CurrencyVector.at(1);
+        myOption = new CallCurrency(maturity,1,0,nbOfAsset,strike,foreign->foreignInterestRate_ );
+        path =  pnl_mat_create(2, assetNb+currencyNb);
+        pnl_mat_set(path,0,0,1.1);
+        step = maturity;
     }
     else if(label == "quanto_exchange"){
 
@@ -112,9 +135,25 @@ int main(int argc, char **argv) {
     else if(label =="call_quanto"){
 
     }
-    GlobalModel* model = new GlobalModel(currencyNb-1, nbOfAsset, AssetVector, CurrencyVector);
+    GlobalModel* model = new GlobalModel(currencyNb-1, nbOfAsset, AssetVector, CurrencyVector, domesticRate);
 
-    //MonteCarlo* mc = new MonteCarlo(model, )
+    PnlRng* pnl_rng = pnl_rng_create(PNL_RNG_MERSENNE);
+    pnl_rng_sseed(pnl_rng, time(NULL));
+
+    MonteCarlo* mc = new MonteCarlo(model, myOption, pnl_rng, fdStep, NSample, step);
+    double price;
+    double std_dev;
+    PnlVect* deltas = pnl_vect_create(assetNb);
+    PnlVect* stdDeltas = pnl_vect_create(assetNb);
+
+    mc->priceAndDelta(path, 0., maturity, price, std_dev, deltas, stdDeltas);
+
+    std::cout << "price : " << price << std::endl;
+
     pnl_mat_free(&correlation);
+    pnl_vect_free(&deltas);
+    pnl_vect_free(&stdDeltas);
+    delete model;
+    delete mc;
     std::exit(0);
 }

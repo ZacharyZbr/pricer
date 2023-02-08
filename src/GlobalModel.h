@@ -14,6 +14,7 @@ public:
 	vector<int> nbOfAssets_; // vector containing the number of assets in each currency
 	vector<Asset> assets_; //assets of the model
 	vector<Currency> currencies_; 
+	double r_; //domestic risk free rate (redundant with asset->domesticRate but can't do it differently yet
 	
 
 	/*
@@ -24,7 +25,7 @@ public:
 	* @param[in] currencies
 	*/
 	GlobalModel(int nbCurrencies, vector<int> nbOfAssets,
-				vector<Asset> assets, vector<Currency> currencies);
+				vector<Asset> assets, vector<Currency> currencies, double r);
 
 
 	/**
