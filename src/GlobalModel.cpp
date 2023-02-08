@@ -56,6 +56,9 @@ void GlobalModel::sample(PnlMat* path, PnlMat* past, double step, PnlRng* rng, d
 		pnl_mat_set_col(path, pathSimulOfAnAsset, i + assets_.size());
 	}
 
+	pnl_vect_free(&pastSimulOfAnAsset);
+	pnl_vect_free(&pathSimulOfAnAsset);
+
 	}
 
 	void GlobalModel::shiftSample(PnlMat* path, PnlMat* shiftedPathPlus, PnlMat* shiftedPathMinus, double fdStep, double t, double step, int d) {
