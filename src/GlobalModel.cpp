@@ -28,16 +28,28 @@ void GlobalModel::sample(PnlMat* path, PnlMat* past, double step, PnlRng* rng, d
 	PnlVect* pastSimulOfAnAsset = pnl_vect_create(past->m);
 	int j = 0;
 	for (int i = 0; i < assets_.size(); i++) {
-		j++;
+		
 		if (j == nbOfAssets_.at(idMarche)) {
 			idMarche++;
 			j = 0;
 		}
+		j++;
 		pnl_mat_get_col(pastSimulOfAnAsset, past, i);
+		
 		//pnl_vect_set(pastSimulOfAnAsset, 0, pnl_mat_get(path, 0, i)); // set pathSimulOfAnAsset[0] = spot of the asset
-		assets_.at(i).simulateT(pathSimulOfAnAsset,  currencies_.at(idMarche).volatilityVector_, step, G,t, pastSimulOfAnAsset);
-		pnl_mat_set_col(path, pathSimulOfAnAsset, i);
+		if (idMarche == 0) {
+			PnlVect* volVector = pnl_vect_create_from_zero(assets_.size() + currencies_.size());
+			assets_.at(i).simulateT(pathSimulOfAnAsset, volVector, step, G, t, pastSimulOfAnAsset);
+			pnl_mat_set_col(path, pathSimulOfAnAsset, i);
+			pnl_vect_free(&volVector);
+
+		}
+		else {
+			assets_.at(i).simulateT(pathSimulOfAnAsset, currencies_.at(idMarche-1).volatilityVector_, step, G, t, pastSimulOfAnAsset);
+			pnl_mat_set_col(path, pathSimulOfAnAsset, i);
+		}
 	}
+	
 	for (int i = 0; i < currencies_.size(); i++) {
 		pnl_mat_get_col(pastSimulOfAnAsset, past, i + assets_.size());
 		//pnl_vect_set(pathSimulOfAnAsset, 0, pnl_mat_get(path, 0, i + assets_.size()));
