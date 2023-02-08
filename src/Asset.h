@@ -23,6 +23,6 @@ public:
 	* @param[in] spot the spot price of the foreign asset in the domestic market
 	*/
 	void simulate(PnlVect* path, PnlVect* currencyVolatilityVector,
-				 double spot, double T, int nbTimeStep, PnlMat* G);
+				 double spot, double step, PnlMat* G);
 
 };

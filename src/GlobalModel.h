@@ -3,6 +3,7 @@
 #include <vector>
 #include "Asset.h"
 #include "Currency.h"
+#include "pnl/pnl_matrix.h"
 
 using namespace std;
 
@@ -13,6 +14,7 @@ public:
 	vector<int> nbOfAssets_; // vector containing the number of assets in each currency
 	vector<Asset> assets_; //assets of the model
 	vector<Currency> currencies_; 
+	
 
 	/*
 	* Constructor of a Global Model
@@ -34,5 +36,5 @@ public:
 	* @param[in] *rng
 	* /!\ *path contient tous les bons spots pour le moment 
 	*/
-	void sample(PnlMat* path, double T, int nbTimeSteps, PnlRng*rng);
+	void sample(PnlMat* path, double step, PnlRng*rng);
  };
