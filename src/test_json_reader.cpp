@@ -125,8 +125,8 @@ int main(int argc, char **argv) {
         double strike = jsonParams.at("Option").at("Strike").get<double>();
         Currency* foreign = &CurrencyVector.at(1);
         myOption = new CallCurrency(maturity,1,0,nbOfAsset,strike,foreign->foreignInterestRate_ );
-        path =  pnl_mat_create(2, assetNb+currencyNb);
-        pnl_mat_set(path,0,0,1.1);
+        path =  pnl_mat_create(2, assetNb+currencyNb-1);
+        pnl_mat_set(path,0,0,10);
         step = maturity;
     }
     else if(label == "quanto_exchange"){
