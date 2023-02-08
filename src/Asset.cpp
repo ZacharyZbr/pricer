@@ -1,6 +1,7 @@
 #include "RiskyAsset.h"
 #include "Asset.h"
 #include "pnl/pnl_matrix.h"
+#include <cmath>
 
 Asset::Asset(double drift, PnlVect* volatilityVector, double domesticInterestRate) {
 	this->drift_ = drift;
@@ -9,12 +10,12 @@ Asset::Asset(double drift, PnlVect* volatilityVector, double domesticInterestRat
 }
 
 void Asset::simulate(PnlVect* path, PnlVect* currencyVolatilityVector, 
-					 double spot, double step, PnlMat* G)
+					 double step, PnlMat* G)
 {
 	int nbDates = path->size;
 	PnlVect* volVector = pnl_vect_create(volatilityVector_->size);
 	pnl_vect_plus_vect(currencyVolatilityVector, volatilityVector_);
-	pnl_vect_set(path, 0, spot);
+	double spot = pnl_vect_get(path, 0);
 	PnlVect* brownian = pnl_vect_create(G->n);
 	for (int i = 1; i < nbDates; i++) {
 		pnl_mat_get_row(brownian, G, i);

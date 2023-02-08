@@ -1,11 +1,12 @@
 #include "GlobalModel.h"
 
 GlobalModel::GlobalModel(int nbCurrencies, vector<int> nbOfAssets,
-						 vector<Asset> assets, vector<Currency> currencies) {
+						 vector<Asset> assets, vector<Currency> currencies, double r) {
 	this->assets_ = assets;
 	this->currencies_ = currencies;
 	this->nbCurrencies_ = nbCurrencies;
 	this->nbOfAssets_ = nbOfAssets;
+	this->r_ = r;
 }
 
 void GlobalModel::sample(PnlMat* path, double step, PnlRng* rng)
@@ -20,9 +21,7 @@ void GlobalModel::sample(PnlMat* path, double step, PnlRng* rng)
 		pnl_mat_set_row(G, gaussianVector, i);
 	}
 	pnl_vect_free(&gaussianVector);
-	// On se donne un spot pour pas que ça bug
-	double spot = 100;
-
+	
 	// On parcourt tous les assets et on set la simulation
 	int idMarche = 0;
 	PnlVect* pathSimulOfAnAsset = pnl_vect_create(path->m);
@@ -33,11 +32,12 @@ void GlobalModel::sample(PnlMat* path, double step, PnlRng* rng)
 			idMarche++;
 			j = 0;
 		}
-		assets_.at(i).simulate(pathSimulOfAnAsset, currencies_.at(idMarche).volatilityVector_, spot, step, G);
+		pnl_vect_set(pathSimulOfAnAsset, 0, pnl_mat_get(path, 0, i)); // set pathSimulOfAnAsset[0] = spot of the asset
+		assets_.at(i).simulate(pathSimulOfAnAsset, currencies_.at(idMarche).volatilityVector_, step, G);
 		pnl_mat_set_col(path, pathSimulOfAnAsset, i);
 	}
 	for (int i = 0; i < currencies_.size(); i++) {
-		currencies_.at(i).simulate(pathSimulOfAnAsset, spot, step, G);
+		currencies_.at(i).simulate(pathSimulOfAnAsset, step, G);
 		pnl_mat_set_col(path, pathSimulOfAnAsset, i + assets_.size());
 	}
 

@@ -11,11 +11,11 @@ Currency::Currency(double drift, PnlVect* volatilityVector,
 
 }
 
-void Currency::simulate(PnlVect* path, double spot, double step, PnlMat*G)
+void Currency::simulate(PnlVect* path, double step, PnlMat*G)
 {
 	
-	pnl_vect_set(path, 0, spot);
 	PnlVect* brownian = pnl_vect_create(G->n);
+	double spot = pnl_vect_get(path, 0);
 	for (int i = 1; i < path->size; i++) {
 		pnl_mat_get_row(brownian, G, i);
 		spot = spot * exp((domesticInterestRate_ - 0.5 * pnl_vect_scalar_prod(volatilityVector_, volatilityVector_)) * step
