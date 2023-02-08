@@ -9,6 +9,18 @@ GlobalModel::GlobalModel(int nbCurrencies, vector<int> nbOfAssets,
 	this->r_ = r;
 }
 
+void GlobalModel::set(int nbCurrencies, vector<int> nbOfAssets,
+						 vector<Asset> assets, vector<Currency> currencies, double r){
+	this->assets_ = assets;
+	this->currencies_ = currencies;
+	this->nbCurrencies_ = nbCurrencies;
+	this->nbOfAssets_ = nbOfAssets;
+	this->r_ = r;
+}
+
+GlobalModel::GlobalModel(){
+}
+
 void GlobalModel::sample(PnlMat* path, PnlMat* past, double step, PnlRng* rng, double t)
 {
 	// Cr�ation d'une matrice G de numberOfRiskyAssets lignes et 

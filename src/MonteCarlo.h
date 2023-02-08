@@ -22,6 +22,9 @@ public:
     MonteCarlo(GlobalModel*, Option*, PnlRng*, double, int, double);
 
     ~MonteCarlo();
+    MonteCarlo();
+
+    void set(GlobalModel* mod, Option* opt, PnlRng* rng, double fdStep, int nbSamples, double step);
 
     //void PriceAndDelta(PnlMat* Past, double t, double& prix, double& std_dev, PnlVect* delta, PnlVect* std_deltas);
 

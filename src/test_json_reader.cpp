@@ -21,10 +21,28 @@ int main(int argc, char **argv) {
         std::exit(0);
     }
     std::ifstream ifs(argv[1]);
-    nlohmann::json jsonParams = nlohmann::json::parse(ifs);
 
+    nlohmann::json jsonParams = nlohmann::json::parse(ifs);
+    int numberOfDaysPerYear1 = jsonParams.at("NumberOfDaysInOneYear").get<int>();
+    double maturity1 = jsonParams.at("Option").at("MaturityInDays").get<int>() / double (numberOfDaysPerYear1);
+
+    GlobalModel* model1 = new GlobalModel();
+    MonteCarlo* mc1 = new MonteCarlo();
+    PnlMat* past1 = parsefile(jsonParams, model1, mc1);
+    pnl_mat_print(past1);
+    double price1;
+    double std_dev1;
+    PnlVect* deltas1 = pnl_vect_create(past1->n);
+    PnlVect* stdDeltas1 = pnl_vect_create(past1->n);
+
+    double t1 = 0.5;
+    mc1->priceAndDelta(past1, t1, maturity1, price1, std_dev1, deltas1, stdDeltas1);
+
+    std::cout << "price1 : " << price1 << std::endl;
     //PnlMat *market = pnl_mat_create_from_file(argv[2]);
 
+<<<<<<< HEAD
+=======
     // Matrice de correlation
     PnlMat *correlation;
     jsonParams.at("Correlations").get_to(correlation);
@@ -202,5 +220,6 @@ int main(int argc, char **argv) {
     pnl_vect_free(&stdDeltas);
     delete model;
     delete mc;
+>>>>>>> 1fe36ac40cc6bca18a1cd5246144c9bbce5bb5b7
     std::exit(0);
 }

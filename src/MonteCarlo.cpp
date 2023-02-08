@@ -23,6 +23,20 @@ MonteCarlo::~MonteCarlo(){
     pnl_mat_free(&this->path_);
   }
 
+MonteCarlo::MonteCarlo(){
+}
+
+void MonteCarlo::set(GlobalModel* mod, Option* opt, PnlRng* rng, double fdStep, int nbSamples, double step){
+      this->mod_ = mod; 
+      this->opt_ = opt; 
+      this->rng_ = rng; 
+      this->fdStep_ = fdStep; 
+      this->nbSamples_ = nbSamples; 
+      this->step_ = step;
+
+      this->path_ = pnl_mat_create(this->opt_->nbTimeSteps_ +1, this->mod_->nbCurrencies_ + this->mod_->assets_.size());
+  }
+
 void MonteCarlo::priceAndDelta(PnlMat* Past, double t, double T, double& prix, double& std_dev,
                                PnlVect* delta, PnlVect* std_deltas){
     double sum = 0;
