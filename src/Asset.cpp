@@ -13,8 +13,8 @@ void Asset::simulate(PnlVect* path, PnlVect* currencyVolatilityVector,
 					 double step, PnlMat* G)
 {
 	int nbDates = path->size;
-	PnlVect* volVector = pnl_vect_create(volatilityVector_->size);
-	pnl_vect_plus_vect(currencyVolatilityVector, volatilityVector_);
+	PnlVect* volVector = pnl_vect_copy(currencyVolatilityVector);
+	pnl_vect_plus_vect(volVector, volatilityVector_);
 	double spot = pnl_vect_get(path, 0);
 	PnlVect* brownian = pnl_vect_create(G->n);
 	for (int i = 1; i < nbDates; i++) {
@@ -39,8 +39,8 @@ void Asset::simulateT(PnlVect* path, PnlVect* currencyVolatilityVector,
 	pnl_vect_set_subblock(path, past, 0);
 	double timeGap = nextDate - currentDate;
 
-	PnlVect* volVector = pnl_vect_create(volatilityVector_->size);
-	pnl_vect_plus_vect(currencyVolatilityVector, volatilityVector_);
+	PnlVect* volVector = pnl_vect_copy(currencyVolatilityVector);
+	pnl_vect_plus_vect(volVector, volatilityVector_);
 	PnlVect* brownian = pnl_vect_create(G->n);
 	if (timeGap != 0){
 		int indexSt = nextDate / step ;
