@@ -16,7 +16,7 @@ MonteCarlo::MonteCarlo(GlobalModel* mod, Option* opt, PnlRng* rng, double fdStep
       this->nbSamples_ = nbSamples; 
       this->step_ = step;
 
-      // this->path_ = pnl_mat_create(this->mod_->size_, this->opt_->nbTimeSteps_ + 1);
+      this->path_ = pnl_mat_create(this->opt_->nbTimeSteps_ +1, this->mod_->nbCurrencies_ + this->mod_->assets_.size());
       // this->path_ = pnl_mat_create(this->opt_->nbTimeSteps_ + 1, this->mod_->size_);
     }
 
@@ -28,8 +28,8 @@ void MonteCarlo::priceAndDelta(PnlMat* Past, double t, double T, double& prix, d
                                PnlVect* delta, PnlVect* std_deltas){
     double sum = 0;
     for (int iteration = 0; iteration < nbSamples_; iteration++) {
-        mod_->sample(Past, step_, rng_);
-        sum+=opt_->payoff(Past);
+        mod_->sample(path_,Past, step_, rng_, t);
+        sum+=opt_->payoff(path_);
     }
     prix = exp(mod_->r_ * (T - t)) * sum / nbSamples_;
 }

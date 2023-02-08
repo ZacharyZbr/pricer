@@ -36,5 +36,5 @@ public:
 	* @param[in] *rng
 	* /!\ *path contient tous les bons spots pour le moment 
 	*/
-	void sample(PnlMat* path, double step, PnlRng*rng);
+	void sample(PnlMat* path,PnlMat* past, double step, PnlRng*rng, double t);
  };

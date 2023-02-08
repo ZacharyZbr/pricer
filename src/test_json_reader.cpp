@@ -132,8 +132,9 @@ int main(int argc, char **argv) {
         double nbTimeStep = jsonParams.at("Option").at("MaturityInDays").get<double>()/period;
         myOption = new ForeignAsian(maturity,nbTimeStep,nbOfAsset);
         path = pnl_mat_create(nbTimeStep+1, assetNb+currencyNb-1);
-        //pnl_mat_set(path,0,0,strike);
-        //pnl_mat_set(path,0,1,1.05);
+        pnl_mat_set(path,0,0,10);
+        pnl_mat_set(path,0,1,10);
+        pnl_mat_set(path,0,2,1.05);
     }
     else if(label == "call_currency"){
         double strike = jsonParams.at("Option").at("Strike").get<double>();
@@ -158,6 +159,8 @@ int main(int argc, char **argv) {
         path = pnl_mat_create(2, assetNb+currencyNb-1);
         pnl_mat_set(path,0,0,strike);
         pnl_mat_set(path,0,1,1.05);
+        pnl_mat_set(path,1,0,strike +.01);
+        pnl_mat_set(path,1,1,1.06);
         step = maturity;
     }
     GlobalModel* model = new GlobalModel(currencyNb-1, nbOfAsset, AssetVector, CurrencyVector, domesticRate);
@@ -170,7 +173,9 @@ int main(int argc, char **argv) {
     PnlVect* deltas = pnl_vect_create(assetNb);
     PnlVect* stdDeltas = pnl_vect_create(assetNb);
 
-    mc->priceAndDelta(path, 0., maturity, price, std_dev, deltas, stdDeltas);
+    double t = 0.5;
+
+    mc->priceAndDelta(path, t, maturity, price, std_dev, deltas, stdDeltas);
 
     std::cout << "price : " << price << std::endl;
 

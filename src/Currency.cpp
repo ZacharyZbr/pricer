@@ -26,7 +26,7 @@ void Currency::simulate(PnlVect* path, double step, PnlMat*G)
 	
 }
 
-void Currency::simulateT(PnlVect* path, PnlVect* currencyVolatilityVector, 
+void Currency::simulateT(PnlVect* path , 
 					 double step, PnlMat* G, double currentDate, PnlVect* past)
 {
 	double nextDate = 0.;
@@ -45,7 +45,7 @@ void Currency::simulateT(PnlVect* path, PnlVect* currencyVolatilityVector,
 		pnl_mat_get_row(brownian, G, indexSt);
 		spot = pnl_vect_get(past, past->size-1) * exp((domesticInterestRate_ - 0.5 * pnl_vect_scalar_prod(volatilityVector_, volatilityVector_)) * timeGap
 		+ sqrt(timeGap) * pnl_vect_scalar_prod(volatilityVector_, brownian));
-		pnl_vect_set(path, past->size, spot);
+		pnl_vect_set(path, past->size-1, spot);
 	}
 
 	for (int i = past->size-1; i<path->size-1; i++){

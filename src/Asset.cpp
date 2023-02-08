@@ -42,14 +42,12 @@ void Asset::simulateT(PnlVect* path, PnlVect* currencyVolatilityVector,
 	PnlVect* volVector = pnl_vect_create(volatilityVector_->size);
 	pnl_vect_plus_vect(currencyVolatilityVector, volatilityVector_);
 	PnlVect* brownian = pnl_vect_create(G->n);
-
 	if (timeGap != 0){
-		
 		int indexSt = nextDate / step ;
 		pnl_mat_get_row(brownian, G, indexSt);
 		spot = pnl_vect_get(past, past->size-1) * exp((domesticInterestRate_ - 0.5 * pnl_vect_scalar_prod(volVector, volVector)) * timeGap
 		+ sqrt(timeGap) * pnl_vect_scalar_prod(volVector, brownian));
-		pnl_vect_set(path, past->size, spot);
+		pnl_vect_set(path, past->size-1, spot);
 	}
 
 	for (int i = past->size-1; i<path->size-1; i++){
