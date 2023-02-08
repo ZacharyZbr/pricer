@@ -12,8 +12,8 @@ GlobalModel::GlobalModel(int nbCurrencies, vector<int> nbOfAssets,
 void GlobalModel::sample(PnlMat* path, double step, PnlRng* rng)
 {
 
-	// Création d'une matrice G de numberOfRiskyAssets lignes et 
-	// nbTimeSteps colonnes qui est la simulation de notre aléa
+	// Crï¿½ation d'une matrice G de numberOfRiskyAssets lignes et 
+	// nbTimeSteps colonnes qui est la simulation de notre alï¿½a
 	PnlMat* G = pnl_mat_create(path->m, path->n);
 	PnlVect* gaussianVector = pnl_vect_create(path->n);
 	for (int i = 0; i < path->m; i++) {

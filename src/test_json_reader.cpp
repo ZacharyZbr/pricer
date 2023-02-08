@@ -73,8 +73,13 @@ int main(int argc, char **argv) {
     auto jsonAssets = jsonParams.at("Assets");
     double indiceAsset = 0;
     vector<int> nbOfAsset;
-    string currentCurrency = "";
-    int currentNbOfAsset = 0;
+    for(int i=0; i<currencyNb; i++){
+        nbOfAsset.push_back(0);
+    }
+    //nbOfAsset.at(0)++;
+    //std::cout << " test " <<  nbOfAsset.at(0) << std::endl;
+    string currentCurrency = domesticCurrencyId;
+    int currentindiceOfAsset = 0;
     for (auto jsonAsset : jsonAssets) {
         indiceAsset ++;
         PnlVect* volatilityVector = pnl_vect_create(correlation->n);
@@ -87,17 +92,17 @@ int main(int argc, char **argv) {
         Asset* myAsset= new Asset(domesticRate, volatilityVector, domesticRate);
         AssetVector.push_back(*myAsset);
         if(currencyId==currentCurrency){
-            currentNbOfAsset ++; 
-        }
-        else if (currentCurrency==""){
-            currentCurrency = currencyId;
-            currentNbOfAsset ++; 
+            nbOfAsset.at(currentindiceOfAsset)++;
         }
         else{
-            nbOfAsset.push_back(currentNbOfAsset);
-            currentNbOfAsset = 1;
+            currentindiceOfAsset++;
+            nbOfAsset.at(currentindiceOfAsset)++;
             currentCurrency = currencyId;
         }
+    }
+
+    for(int i=0; i<currencyNb; i++){
+        std::cout << " test " <<  nbOfAsset.at(i) << std::endl;
     }
 
     int numberOfDaysPerYear = jsonParams.at("NumberOfDaysInOneYear").get<int>();
@@ -113,7 +118,9 @@ int main(int argc, char **argv) {
 
     }
     else if(label == "call_currency"){
-        //myOption = new CallCurrency(maturity,)
+        double strike = jsonParams.at("Option").at("Strike").get<double>();
+        Currency foreign = CurrencyVector.at(1);
+        //myOption = new CallCurrency(maturity,1,0,nbOfAsset,strike,foreign->foreignInterestRate_ )
     }
     else if(label == "quanto_exchange"){
 
@@ -121,7 +128,7 @@ int main(int argc, char **argv) {
     else if(label =="call_quanto"){
 
     }
-    GlobalModel* model = new GlobalModel(currencyNb-1, nbOfAsset, AssetVector, CurrencyVector);
+    GlobalModel* model = new GlobalModel(currencyNb-1, nbOfAsset, AssetVector, CurrencyVector, domesticRate);
 
     //MonteCarlo* mc = new MonteCarlo(model, )
     pnl_mat_free(&correlation);
