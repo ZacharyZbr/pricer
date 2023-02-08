@@ -39,7 +39,13 @@ public:
 	void sample(PnlMat* path,PnlMat* past, double step, PnlRng*rng, double t);
 
 	/*
-	* Shift path
+	* Shift the path for the computation of the deltas
+	* @param[in] *path path of the underlyig assets
+	* @param[out] *shiftedPathPlus path \times (1+fdStep)
+	* @param[out] *shiftedPathPlus path \times (1-fdStep)
+	* @param[in] fdStep finite difference step 
+	* @param[in] t time at which we compute the deltas
+	* @param[in] step time gap in the temporal subdivision grid
 	*/
 	void shiftSample(PnlMat* path, PnlMat* shiftedPathPlus, PnlMat* shiftedPathMinus, double fdStep, double t, double step, int d);
  };
