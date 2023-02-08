@@ -11,7 +11,6 @@ GlobalModel::GlobalModel(int nbCurrencies, vector<int> nbOfAssets,
 
 void GlobalModel::sample(PnlMat* path, PnlMat* past, double step, PnlRng* rng, double t)
 {
-
 	// Cr�ation d'une matrice G de numberOfRiskyAssets lignes et 
 	// nbTimeSteps colonnes qui est la simulation de notre al�a
 	PnlMat* G = pnl_mat_create(path->m, path->n);
@@ -57,4 +56,22 @@ void GlobalModel::sample(PnlMat* path, PnlMat* past, double step, PnlRng* rng, d
 		pnl_mat_set_col(path, pathSimulOfAnAsset, i + assets_.size());
 	}
 
+	}
+
+	void GlobalModel::shiftSample(PnlMat* path, PnlMat* shiftedPathPlus, PnlMat* shiftedPathMinus, double fdStep, double t, double step, int d) {
+		pnl_mat_clone(shiftedPathPlus, path);
+		pnl_mat_clone(shiftedPathMinus, path);
+		double nextDate = 0.;
+		int quotient = t / step;
+		if (t != 0) {
+			nextDate = quotient * step + step;
+		}
+		int nextDateIndexInMatrix = nextDate / step;
+
+		for (int index = nextDateIndexInMatrix; index < path->m; index++) {
+			double shiftedPlusValue = pnl_mat_get(path, index, d) * (1 + fdStep);
+			double shiftedMinusValue = pnl_mat_get(path, index, d) * (1 - fdStep);
+			pnl_mat_set(shiftedPathPlus, index, d, shiftedPlusValue);
+			pnl_mat_set(shiftedPathMinus, index, d, shiftedMinusValue);
+		}
 }

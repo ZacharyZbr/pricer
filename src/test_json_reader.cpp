@@ -23,6 +23,7 @@ int main(int argc, char **argv) {
     std::ifstream ifs(argv[1]);
     nlohmann::json jsonParams = nlohmann::json::parse(ifs);
 
+
     // Matrice de correlation
     PnlMat *correlation;
     jsonParams.at("Correlations").get_to(correlation);
@@ -127,6 +128,7 @@ int main(int argc, char **argv) {
     double fdStep = jsonParams.at("RelativeFiniteDifferenceStep").get<double>();
     int NSample = jsonParams.at("SampleNb").get<int>();
 
+
     if(label == "foreign_asian"){
         double period = jsonParams.at("Option").at("FixingDatesInDays").at("Period").get<double>();
         step = period/numberOfDaysPerYear;
@@ -180,7 +182,7 @@ int main(int argc, char **argv) {
     MonteCarlo* mc = new MonteCarlo(model, myOption, pnl_rng, fdStep, NSample, step);
     double price;
     double std_dev;
-    PnlVect* deltas = pnl_vect_create(assetNb);
+    PnlVect* deltas = pnl_vect_create_from_zero(assetNb);
     PnlVect* stdDeltas = pnl_vect_create(assetNb);
 
     double t = 0.5;
@@ -188,6 +190,11 @@ int main(int argc, char **argv) {
     mc->priceAndDelta(path, t, maturity, price, std_dev, deltas, stdDeltas);
 
     std::cout << "price : " << price << std::endl;
+    std::cout << "deltas : " << std::endl;
+   
+    pnl_vect_print(deltas);
+
+
 
     pnl_mat_free(&correlation);
     pnl_vect_free(&deltas);

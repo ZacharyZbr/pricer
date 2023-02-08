@@ -34,7 +34,12 @@ public:
 	* @param[out] *path matrix of size ( nbTimeSteps \times sum(nbOfAssets) + \hat(n)) in which we store the simulations
 	* @param[in] step time difference between two dates in the temporal subdiv grid
 	* @param[in] *rng
-	* /!\ *path contient tous les bons spots pour le moment 
+	* 
 	*/
 	void sample(PnlMat* path,PnlMat* past, double step, PnlRng*rng, double t);
+
+	/*
+	* Shift path
+	*/
+	void shiftSample(PnlMat* path, PnlMat* shiftedPathPlus, PnlMat* shiftedPathMinus, double fdStep, double t, double step, int d);
  };
