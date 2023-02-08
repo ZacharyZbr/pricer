@@ -10,6 +10,7 @@
 #include <vector>
 #include "Asset.h"
 #include "pnl/pnl_vector.h"
+#include "pnl/pnl_matrix.h"
 
 int main(int argc, char **argv) {
     if (argc != 2) {
@@ -21,6 +22,11 @@ int main(int argc, char **argv) {
 
     PnlMat *correlation;
     jsonParams.at("Correlations").get_to(correlation);
+    std::cout << "Matrice de Correlation : " << std::endl;
+    pnl_mat_print(correlation);
+
+    std::cout << "Matrice de cholesky : "  << std::endl;
+    pnl_mat_chol(correlation);
     pnl_mat_print(correlation);
 
     std::string domesticCurrencyId;
@@ -98,7 +104,10 @@ int main(int argc, char **argv) {
     double maturity = jsonParams.at("Option").at("MaturityInDays").get<int>() / double (numberOfDaysPerYear);
     std::string label = jsonParams.at("Option").at("Type").get<std::string>();
     std::cout << "Type option : " << label << std::endl;
+    std::cout << "Maturité : " << maturity << std::endl;
+    std::cout << "numberOfDaysPerYear : " << numberOfDaysPerYear << std::endl;
 
+    PnlMat* path;
     Option* myOption;
     if(label == "foreign_asian"){
 
