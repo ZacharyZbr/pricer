@@ -163,6 +163,15 @@ int main(int argc, char **argv) {
         pnl_mat_set(path,1,1,1.06);
         step = maturity;
     }
+    else if(label =="call_vanille"){
+        double strike = jsonParams.at("Option").at("Strike").get<double>();
+        myOption = new Call(maturity,1,nbOfAsset,strike);
+        path = pnl_mat_create(2, assetNb+currencyNb-1);
+        pnl_mat_set(path,0,0,strike);
+        pnl_mat_set(path,1,0,strike +.01);
+        step = maturity;
+    }
+
     GlobalModel* model = new GlobalModel(currencyNb-1, nbOfAsset, AssetVector, CurrencyVector, domesticRate);
     PnlRng* pnl_rng = pnl_rng_create(PNL_RNG_MERSENNE);
     pnl_rng_sseed(pnl_rng, time(NULL));
