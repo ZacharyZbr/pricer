@@ -23,6 +23,8 @@ int main(int argc, char **argv) {
     std::ifstream ifs(argv[1]);
     nlohmann::json jsonParams = nlohmann::json::parse(ifs);
 
+    //PnlMat *market = pnl_mat_create_from_file(argv[2]);
+
     // Matrice de correlation
     PnlMat *correlation;
     jsonParams.at("Correlations").get_to(correlation);
