@@ -17,7 +17,7 @@ CallCurrency::~CallCurrency(){}
 
 double CallCurrency::payoff(const PnlMat* path){
     
-	double payoff = pnl_mat_get(path, this->nbTimeSteps_, 1)*exp(-this->r * this->T_) - this->strike;
+	double payoff = pnl_mat_get(path, this->nbTimeSteps_, 1)*exp(this->r * this->T_) - this->strike;
 	if (payoff > 0){
 		return payoff;
 	}
