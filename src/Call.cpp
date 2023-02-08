@@ -9,12 +9,11 @@ Call::Call(double T, int nbTimeSteps, vector<int> assetCurrencyMapping, int stri
 	this->nbTimeSteps_ = nbTimeSteps;
     this->assetCurrencyMapping_ = assetCurrencyMapping;
 	this->strike_ = strike;
-	this->r = r;
 }
 
-CallCurrency::~Call(){}
+Call::~Call(){}
 
-double CallCurrency::payoff(const PnlMat* path){
+double Call::payoff(const PnlMat* path){
     
 	double payoff = pnl_mat_get(path, this->nbTimeSteps_, 0) - this->strike_;
 	if (payoff > 0){

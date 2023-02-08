@@ -24,10 +24,11 @@
       "Type": "Fixed",
       "Period": 21
     },
+    "Strike": 10,
     "MaturityInDays": 252
   },
   "Correlations": [
-    [ 1 ],
+    [ 1 ]
   ],
   "SampleNb": 50000,
   "RelativeFiniteDifferenceStep": 0.1

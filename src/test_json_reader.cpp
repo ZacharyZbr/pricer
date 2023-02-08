@@ -8,6 +8,7 @@
 #include "CallCurrency.h"
 #include "CallQuanto.h"
 #include "ForeignAsian.h"
+#include "Call.h"
 #include "QuantoExchange.h"
 #include <vector>
 #include "Asset.h"
