@@ -2,8 +2,9 @@
 
 #include "pnl/pnl_vector.h"
 #include "pnl/pnl_matrix.h"
+#include <vector>
 
-//using namespace std;
+using namespace std;
     
 
 /// \brief Classe Option abstraite
@@ -13,7 +14,7 @@ class Option
     double T_;        /// maturité
     int nbTimeSteps_; /// nombre de pas de temps de discrétisation
     int size_;        /// dimension du modèle, redondant avec BlackScholesModel::size_
-    PnlVect* assetCurrencyMapping_; ///Vecteur de nombre d'asset par devises. 
+    vector<int> assetCurrencyMapping_; ///Vecteur de nombre d'asset par devises. 
     double strike_;
 
     /**
