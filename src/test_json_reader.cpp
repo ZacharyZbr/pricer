@@ -7,6 +7,8 @@
 #include "Currency.h"
 #include "CallCurrency.h"
 #include "CallQuanto.h"
+#include "ForeignAsian.h"
+#include "QuantoExchange.h"
 #include <vector>
 #include "Asset.h"
 #include "pnl/pnl_vector.h"
@@ -20,11 +22,13 @@ int main(int argc, char **argv) {
     std::ifstream ifs(argv[1]);
     nlohmann::json jsonParams = nlohmann::json::parse(ifs);
 
+    // Matrice de correlation
     PnlMat *correlation;
     jsonParams.at("Correlations").get_to(correlation);
     std::cout << "Matrice de Correlation : " << std::endl;
     pnl_mat_print(correlation);
 
+    // Matrice de cholesky
     std::cout << "Matrice de cholesky : "  << std::endl;
     pnl_mat_chol(correlation);
     pnl_mat_print(correlation);
@@ -106,7 +110,7 @@ int main(int argc, char **argv) {
     }
 
     for(int i=0; i<currencyNb; i++){
-        std::cout << " test " <<  nbOfAsset.at(i) << std::endl;
+        std::cout << " Nombre d'asset par devise " <<  nbOfAsset.at(i) << std::endl;
     }
 
     int numberOfDaysPerYear = jsonParams.at("NumberOfDaysInOneYear").get<int>();
@@ -123,21 +127,38 @@ int main(int argc, char **argv) {
     int NSample = jsonParams.at("SampleNb").get<int>();
 
     if(label == "foreign_asian"){
-
+        double period = jsonParams.at("Option").at("FixingDatesInDays").at("Period").get<double>();
+        step = period/numberOfDaysPerYear;
+        double nbTimeStep = jsonParams.at("Option").at("MaturityInDays").get<double>()/period;
+        myOption = new ForeignAsian(maturity,nbTimeStep,nbOfAsset);
+        path = pnl_mat_create(nbTimeStep+1, assetNb+currencyNb-1);
+        //pnl_mat_set(path,0,0,strike);
+        //pnl_mat_set(path,0,1,1.05);
     }
     else if(label == "call_currency"){
         double strike = jsonParams.at("Option").at("Strike").get<double>();
         Currency* foreign = &CurrencyVector.at(0);
-        myOption = new CallCurrency(maturity,1,0,nbOfAsset,strike,foreign->foreignInterestRate_ );
-        path =  pnl_mat_create(2, assetNb+currencyNb-1);
+        myOption = new CallCurrency(maturity,1,nbOfAsset,strike,foreign->foreignInterestRate_ );
+        path = pnl_mat_create(2, assetNb+currencyNb-1);
         pnl_mat_set(path,0,0,10);
         step = maturity;
     }
     else if(label == "quanto_exchange"){
-
+        double strike = jsonParams.at("Option").at("Strike").get<double>();
+        myOption = new QuantoExchange(maturity,1,nbOfAsset,strike);
+        path = pnl_mat_create(2, assetNb+currencyNb-1);
+        pnl_mat_set(path,0,0,2*strike);
+        pnl_mat_set(path,0,1,strike);
+        pnl_mat_set(path,0,1,1.05);
+        step = maturity;
     }
     else if(label =="call_quanto"){
-
+        double strike = jsonParams.at("Option").at("Strike").get<double>();
+        myOption = new CallQuanto(maturity,1,nbOfAsset,strike);
+        path = pnl_mat_create(2, assetNb+currencyNb-1);
+        pnl_mat_set(path,0,0,strike);
+        pnl_mat_set(path,0,1,1.05);
+        step = maturity;
     }
     GlobalModel* model = new GlobalModel(currencyNb-1, nbOfAsset, AssetVector, CurrencyVector, domesticRate);
     PnlRng* pnl_rng = pnl_rng_create(PNL_RNG_MERSENNE);

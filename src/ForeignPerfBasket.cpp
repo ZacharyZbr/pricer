@@ -3,9 +3,8 @@
 #include "pnl/pnl_vector.h"
 #include "pnl/pnl_matrix.h"
 
-ForeignPerfBasket::ForeignPerfBasket(double T, int nbTimeSteps, int size, vector<int> assetCurrencyMapping, double strike) {
+ForeignPerfBasket::ForeignPerfBasket(double T, int nbTimeSteps, vector<int> assetCurrencyMapping, double strike) {
 	this->T_ = T;
-	this->size_ = size;
 	this->nbTimeSteps_ = nbTimeSteps;
     this->assetCurrencyMapping_ = assetCurrencyMapping;
     this->strike_ = strike;
