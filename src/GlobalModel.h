@@ -27,6 +27,13 @@ public:
 	GlobalModel(int nbCurrencies, vector<int> nbOfAssets,
 				vector<Asset> assets, vector<Currency> currencies, double r);
 
+	GlobalModel(GlobalModel &g);
+
+	void set(int nbCurrencies, vector<int> nbOfAssets,
+						 vector<Asset> assets, vector<Currency> currencies, double r);
+
+	GlobalModel();
+
 
 	/**
 	* Simulates the trajectories for all the underlying assets 
