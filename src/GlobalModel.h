@@ -4,6 +4,7 @@
 #include "Asset.h"
 #include "Currency.h"
 
+
 using namespace std;
 
 class GlobalModel {
@@ -13,6 +14,7 @@ public:
 	vector<int> nbOfAssets_; // vector containing the number of assets in each currency
 	vector<Asset> assets_; //assets of the model
 	vector<Currency> currencies_; 
+	
 
 	/*
 	* Constructor of a Global Model
@@ -29,10 +31,9 @@ public:
 	* Simulates the trajectories for all the underlying assets 
 	* and exchange rates in the multi-currency market 
 	* @param[out] *path matrix of size ( nbTimeSteps \times sum(nbOfAssets) + \hat(n)) in which we store the simulations
-	* @param[in] T maturity
-	* @param[in] nbTimeSteps
+	* @param[in] step time difference between two dates in the temporal subdiv grid
 	* @param[in] *rng
 	* /!\ *path contient tous les bons spots pour le moment 
 	*/
-	void sample(PnlMat* path, double T, int nbTimeSteps, PnlRng*rng);
+	void sample(PnlMat* path, double step, PnlRng*rng);
  };

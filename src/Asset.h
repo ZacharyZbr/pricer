@@ -21,8 +21,9 @@ public:
 	* in the domestic market
 	* @param[in] *currencyVolatilityVector the vol vector of the currency X
 	* @param[in] spot the spot price of the foreign asset in the domestic market
+	* @param[in] step time difference between two dates in the temporal subdiv grid
 	*/
 	void simulate(PnlVect* path, PnlVect* currencyVolatilityVector,
-				 double spot, double T, int nbTimeStep, PnlMat* G);
+				 double spot, double step, PnlMat* G);
 
 };

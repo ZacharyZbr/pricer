@@ -18,10 +18,9 @@ public:
 	* Simulates the asset on a given temporal subdivision grid
 	* @param[out] *path the simulation on the temporal grid
 	* @param[in] spot spot price of the asset
-	* @param[in] T maturity
-	* @param[in] nbTimeStep
+	* @param[in] step time difference between two dates in the temporal subdiv grid
 	* @param[in] *G Normal vector that corresponds to the Brownian Motion
 	*/
-	void simulate(PnlVect* path, double spot, double T, int nbTimeStep, PnlMat *G);
+	void simulate(PnlVect* path, double spot, double step, PnlMat *G);
 
 };
