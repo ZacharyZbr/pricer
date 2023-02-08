@@ -13,13 +13,13 @@ public:
     PnlRng* rng_;            /*! pointeur sur le générateur */
     PnlMat* path_;
     double fdStep_;          /*! pas de différence finie */
-    long nbSamples_;         /*! nombre de tirages Monte Carlo */
+    int nbSamples_;         /*! nombre de tirages Monte Carlo */
     double step_;
 
     /**
      * Constructeur de la classe
      */
-    MonteCarlo(GlobalModel*, Option*, PnlRng*, double, long, double);
+    MonteCarlo(GlobalModel*, Option*, PnlRng*, double, int, double);
 
     ~MonteCarlo();
 

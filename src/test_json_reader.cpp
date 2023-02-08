@@ -114,13 +114,20 @@ int main(int argc, char **argv) {
 
     PnlMat* path;
     Option* myOption;
+    double step;
+    double fdStep = jsonParams.at("RelativeFiniteDifferenceStep").get<double>();
+    int NSample = jsonParams.at("SampleNb").get<int>();
+
     if(label == "foreign_asian"){
 
     }
     else if(label == "call_currency"){
         double strike = jsonParams.at("Option").at("Strike").get<double>();
-        Currency foreign = CurrencyVector.at(1);
-        //myOption = new CallCurrency(maturity,1,0,nbOfAsset,strike,foreign->foreignInterestRate_ )
+        Currency* foreign = &CurrencyVector.at(1);
+        myOption = new CallCurrency(maturity,1,0,nbOfAsset,strike,foreign->foreignInterestRate_ );
+        path =  pnl_mat_create(2, assetNb+currencyNb);
+        pnl_mat_set(path,0,0,1.1);
+        step = maturity;
     }
     else if(label == "quanto_exchange"){
 
@@ -130,7 +137,23 @@ int main(int argc, char **argv) {
     }
     GlobalModel* model = new GlobalModel(currencyNb-1, nbOfAsset, AssetVector, CurrencyVector, domesticRate);
 
-    //MonteCarlo* mc = new MonteCarlo(model, )
+    PnlRng* pnl_rng = pnl_rng_create(PNL_RNG_MERSENNE);
+    pnl_rng_sseed(pnl_rng, time(NULL));
+
+    MonteCarlo* mc = new MonteCarlo(model, myOption, pnl_rng, fdStep, NSample, step);
+    double price;
+    double std_dev;
+    PnlVect* deltas = pnl_vect_create(assetNb);
+    PnlVect* stdDeltas = pnl_vect_create(assetNb);
+
+    mc->priceAndDelta(path, 0., maturity, price, std_dev, deltas, stdDeltas);
+
+    std::cout << "price : " << price << std::endl;
+
     pnl_mat_free(&correlation);
+    pnl_vect_free(&deltas);
+    pnl_vect_free(&stdDeltas);
+    delete model;
+    delete mc;
     std::exit(0);
 }

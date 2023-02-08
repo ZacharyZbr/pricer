@@ -8,7 +8,7 @@
 
 using namespace std;
 
-MonteCarlo::MonteCarlo(GlobalModel* mod, Option* opt, PnlRng* rng, double fdStep, long nbSamples, double step){
+MonteCarlo::MonteCarlo(GlobalModel* mod, Option* opt, PnlRng* rng, double fdStep, int nbSamples, double step){
       this->mod_ = mod; 
       this->opt_ = opt; 
       this->rng_ = rng; 
