@@ -37,6 +37,7 @@ void GlobalModel::sample(PnlMat* path, double step, PnlRng* rng)
 		pnl_mat_set_col(path, pathSimulOfAnAsset, i);
 	}
 	for (int i = 0; i < currencies_.size(); i++) {
+		pnl_vect_set(pathSimulOfAnAsset, 0, pnl_mat_get(path, 0, i + assets_.size()));
 		currencies_.at(i).simulate(pathSimulOfAnAsset, step, G);
 		pnl_mat_set_col(path, pathSimulOfAnAsset, i + assets_.size());
 	}

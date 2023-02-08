@@ -43,22 +43,26 @@ int main(int argc, char **argv) {
     double indiceCurrency = 0;
     vector<Currency> CurrencyVector; 
     for (auto jsonCurrency : jsonCurrencies) {
-        indiceCurrency ++;
-        PnlVect* volatilityVector = pnl_vect_create(correlation->n);
-        pnl_mat_get_row(volatilityVector, correlation, correlation->m - currencyNb + indiceCurrency-1);
         std::string CurrencyId;
         jsonCurrency.at("id").get_to(CurrencyId);
-        std::string currencyId(jsonCurrency.at("id").get<std::string>());
         double rf = jsonCurrency.at("InterestRate").get<double>();
-        double realVolatility = jsonCurrency.at("Volatility").get<double>();
-        std::cout << "interest rate " << rf << std::endl;
-        std::cout << "real volatility " << realVolatility << std::endl;
-        pnl_vect_mult_scalar(volatilityVector,realVolatility);
-        Currency* myCurrency = new Currency(domesticRate, volatilityVector, domesticRate, rf);
-        CurrencyVector.push_back(*myCurrency);
         if (CurrencyId == domesticCurrencyId){
             domesticRate =  rf;
         }
+        else{
+            indiceCurrency ++;
+            PnlVect* volatilityVector = pnl_vect_create(correlation->n);
+            pnl_mat_get_row(volatilityVector, correlation, correlation->m - currencyNb + indiceCurrency);
+            std::string currencyId(jsonCurrency.at("id").get<std::string>());
+            double realVolatility = jsonCurrency.at("Volatility").get<double>();
+            std::cout << "interest rate " << rf << std::endl;
+            std::cout << "real volatility " << realVolatility << std::endl;
+            pnl_vect_mult_scalar(volatilityVector,realVolatility);
+            Currency* myCurrency = new Currency(domesticRate, volatilityVector, domesticRate, rf);
+            CurrencyVector.push_back(*myCurrency);
+        }
+        
+        // regarder volatilyty vector pour Domestic currency
     }
     for (int i=0; i<CurrencyVector.size(); i++){
         CurrencyVector.at(i).drift_ = domesticRate;
@@ -123,7 +127,7 @@ int main(int argc, char **argv) {
     }
     else if(label == "call_currency"){
         double strike = jsonParams.at("Option").at("Strike").get<double>();
-        Currency* foreign = &CurrencyVector.at(1);
+        Currency* foreign = &CurrencyVector.at(0);
         myOption = new CallCurrency(maturity,1,0,nbOfAsset,strike,foreign->foreignInterestRate_ );
         path =  pnl_mat_create(2, assetNb+currencyNb-1);
         pnl_mat_set(path,0,0,10);
@@ -136,7 +140,6 @@ int main(int argc, char **argv) {
 
     }
     GlobalModel* model = new GlobalModel(currencyNb-1, nbOfAsset, AssetVector, CurrencyVector, domesticRate);
-
     PnlRng* pnl_rng = pnl_rng_create(PNL_RNG_MERSENNE);
     pnl_rng_sseed(pnl_rng, time(NULL));
 

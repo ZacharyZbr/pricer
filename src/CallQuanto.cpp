@@ -14,7 +14,7 @@ CallQuanto::CallQuanto(double T, int nbTimeSteps, int size, vector<int> assetCur
 CallQuanto::~CallQuanto(){}
 
 double CallQuanto::payoff(const PnlMat* path){
-    double payoff = pnl_mat_get(path, this->nbTimeSteps_, this->assetCurrencyMapping_.at(1)) - this->strike;
+    double payoff = pnl_mat_get(path, this->nbTimeSteps_, this->assetCurrencyMapping_.at(1)) - this->strike_;
 	if (payoff > 0){
 		return payoff;
 	}
