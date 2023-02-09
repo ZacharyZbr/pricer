@@ -29,7 +29,6 @@ int main(int argc, char **argv) {
 
     
     Portfolio* hedgingPortfolio = new Portfolio(mc);
-    cout << argv[2] << endl;
 
     PnlMat* marketData = pnl_mat_create_from_file(argv[2]);
 
@@ -61,25 +60,24 @@ int main(int argc, char **argv) {
             pnl_mat_set_row(newpast, currentMarketDataRow, nbPastRow);
             pnl_mat_clone(past, newpast);
             nbPastRow++; 
+            pnl_mat_free(&newpast);
         }
         else{
             pnl_mat_get_row(currentMarketDataRow, marketData, date);
             pnl_mat_set_row(past, currentMarketDataRow, nbPastRow-1);
         }
-        pnl_mat_print(past);
-        t = (double)(date / numberOfDaysPerYear);
-        PnlMat* past = pnl_mat_create(date+1, marketData->n);
-        pnl_mat_extract_subblock(past, marketData, 0, date+1, 0, marketData->n); //
-        pnl_mat_get_row(assetValues, past, date);
-        printf("coucou ici \n");
+        t = (double)date / numberOfDaysPerYear;
+        cout<<"t :" << t << endl;
+
+
         double pfValueBeforeRebalancing = pnl_vect_scalar_prod(deltas, assetValues) +
             hedgingPortfolio->positions_.at(((int)date / rebalancingPeriod)-1).riskFreeQuantity * exp(model->r_ * rebalancingPeriod / numberOfDaysPerYear);
-        printf("coucou la \n");
         hedgingPortfolio->mc_->priceAndDelta(past, t, maturity, price, std_dev, deltas, stdDeltas);
-        printf("coucou\n");
         // nv quantit� � mettre au taux sans risque
         double newRiskFree = pfValueBeforeRebalancing - pnl_vect_scalar_prod(deltas, assetValues);
+        cout<<"price :" << price << endl;
         cout<<"date :" << date << endl;
+
 
         Position* currentPosition = new Position(date, pfValueBeforeRebalancing, price,
                                                  newRiskFree, std_dev, deltas, stdDeltas);
@@ -97,7 +95,7 @@ int main(int argc, char **argv) {
     std::cout << "price : " << price << std::endl;
     //PnlMat *market = pnl_mat_create_from_file(argv[2]);
     std::cout << "deltas : " << std::endl;
-   
+   pnl_vect_free(&currentMarketDataRow);
     pnl_vect_print(deltas);
     pnl_vect_free(&deltas);
     pnl_vect_free(&stdDeltas);

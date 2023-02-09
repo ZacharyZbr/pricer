@@ -40,7 +40,7 @@
     [ 1, 0.2 ],
     [ 0.1, 1 ]
   ],
-  "SampleNb": 2,
+  "SampleNb": 5000,
   "RelativeFiniteDifferenceStep": 0.1,
   "benchmarkResults": {
     "price": 2.473612296812984,
