@@ -46,7 +46,7 @@ void from_json(const nlohmann::json &j, PnlMat *&mat) {
     }
 }
 
-PnlMat* parsefile(const nlohmann::json &jsonParams, GlobalModel* model, MonteCarlo* mc){
+void parsefile(const nlohmann::json &jsonParams, GlobalModel* model, MonteCarlo* mc){
     PnlMat *correlation;
     jsonParams.at("Correlations").get_to(correlation);
     std::cout << "Matrice de Correlation : " << std::endl;
@@ -144,7 +144,6 @@ PnlMat* parsefile(const nlohmann::json &jsonParams, GlobalModel* model, MonteCar
     std::cout << "Maturité : " << maturity << std::endl;
     std::cout << "numberOfDaysPerYear : " << numberOfDaysPerYear << std::endl;
 
-    PnlMat* past;
     Option* myOption;
     double step;
     double fdStep = jsonParams.at("RelativeFiniteDifferenceStep").get<double>();
@@ -155,44 +154,26 @@ PnlMat* parsefile(const nlohmann::json &jsonParams, GlobalModel* model, MonteCar
         step = period/numberOfDaysPerYear;
         double nbTimeStep = jsonParams.at("Option").at("MaturityInDays").get<double>()/period;
         myOption = new ForeignAsian(maturity,nbTimeStep,nbOfAsset);
-        past = pnl_mat_create(nbTimeStep+1, assetNb+currencyNb-1);
-        pnl_mat_set(past,0,0,10);
-        pnl_mat_set(past,0,1,10);
-        pnl_mat_set(past,0,2,1.05);
     }
     else if(label == "call_currency"){
         double strike = jsonParams.at("Option").at("Strike").get<double>();
         Currency* foreign = &CurrencyVector.at(0);
         myOption = new CallCurrency(maturity,1,nbOfAsset,strike,foreign->foreignInterestRate_ );
-        past = pnl_mat_create(2, assetNb+currencyNb-1);
-        pnl_mat_set(past,0,0,10);
         step = maturity;
     }
     else if(label == "quanto_exchange"){
         double strike = jsonParams.at("Option").at("Strike").get<double>();
         myOption = new QuantoExchange(maturity,1,nbOfAsset,strike);
-        past = pnl_mat_create(2, assetNb+currencyNb-1);
-        pnl_mat_set(past,0,0,2*strike);
-        pnl_mat_set(past,0,1,strike);
-        pnl_mat_set(past,0,1,1.05);
         step = maturity;
     }
     else if(label =="call_quanto"){
         double strike = jsonParams.at("Option").at("Strike").get<double>();
         myOption = new CallQuanto(maturity,1,nbOfAsset,strike);
-        past = pnl_mat_create(2, assetNb+currencyNb-1);
-        pnl_mat_set(past,0,0,strike);
-        pnl_mat_set(past,0,1,1.05);
-        pnl_mat_set(past,1,0,strike +.01);
-        pnl_mat_set(past,1,1,1.06);
         step = maturity;
     }
     else if(label =="call_vanille"){
         double strike = jsonParams.at("Option").at("Strike").get<double>();
         myOption = new Call(maturity,1,nbOfAsset,strike);
-        past = pnl_mat_create(2, assetNb+currencyNb-1);
-        pnl_mat_set(past,0,0,strike);
-        pnl_mat_set(past,1,0,strike +.01);
         step = maturity;
     }
 
@@ -202,8 +183,4 @@ PnlMat* parsefile(const nlohmann::json &jsonParams, GlobalModel* model, MonteCar
     pnl_rng_sseed(pnl_rng, time(NULL));
 
     mc->set(model,myOption, pnl_rng, fdStep, NSample, step );
-
-    
-    return  past;
-
 }

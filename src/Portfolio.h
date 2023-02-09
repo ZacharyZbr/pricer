@@ -7,10 +7,11 @@
 
 class Portfolio
 {
+public:
 	MonteCarlo* mc_;
 	vector<Position> positions_;
 
-	Portfolio(MonteCarlo* mc, vector<Position> positions);
+	Portfolio(MonteCarlo* mc);
 
 };
 

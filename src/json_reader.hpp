@@ -20,4 +20,4 @@
 
 void from_json(const nlohmann::json &j, PnlVect *&vect);
 void from_json(const nlohmann::json &j, PnlMat *&mat);
-PnlMat* parsefile(const nlohmann::json &j, GlobalModel* model, MonteCarlo* mc);
+void parsefile(const nlohmann::json &j, GlobalModel* model, MonteCarlo* mc);
