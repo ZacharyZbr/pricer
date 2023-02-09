@@ -24,6 +24,8 @@ int main(int argc, char **argv) {
     GlobalModel* model = new GlobalModel();
     MonteCarlo* mc = new MonteCarlo();
     parsefile(jsonParams, model, mc);
+
+   
   
     Portfolio* hedgingPortfolio = new Portfolio(mc);
 
