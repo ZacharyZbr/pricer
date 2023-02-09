@@ -23,5 +23,6 @@ public:
     CallCurrency(double T, int nbTimeSteps, vector<int> assetCurrencyMapping, int strike, double r);
 	~CallCurrency();
     double payoff(const PnlMat* path) override;
+	bool add(int date, int nbOfDays) override;
 
 };

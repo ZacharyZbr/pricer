@@ -18,5 +18,6 @@ public:
     CallQuanto(double T, int nbTimeSteps, vector<int> assetCurrencyMapping, int strike);
 	~CallQuanto();
     double payoff(const PnlMat* path) override;
+	bool add(int date, int nbOfDays) override;
 
 };

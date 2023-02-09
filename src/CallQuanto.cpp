@@ -20,3 +20,10 @@ double CallQuanto::payoff(const PnlMat* path){
 	return 0;
 };
 
+bool CallQuanto::add(int date, int nbOfDays){
+    if (date==(int)T_*nbOfDays){
+		return true;
+	}
+	return false;
+};
+

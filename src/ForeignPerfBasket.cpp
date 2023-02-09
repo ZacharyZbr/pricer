@@ -54,3 +54,7 @@ double ForeignPerfBasket::payoff(const PnlMat* path){
 	}
 	return 0;
 };
+
+bool ForeignPerfBasket::add(int date, int nbOfDays){
+    return false;
+};

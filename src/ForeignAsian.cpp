@@ -22,3 +22,8 @@ double ForeignAsian::payoff(const PnlMat* path){
 	}
 	return 0;
 };
+
+bool ForeignAsian::add(int date, int nbOfDays){
+    return false;
+
+};

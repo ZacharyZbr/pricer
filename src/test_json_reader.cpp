@@ -42,17 +42,31 @@ int main(int argc, char **argv) {
 
     double t=0.;
     PnlMat* past = pnl_mat_create(1, marketData->n);
+    int nbPastRow = 1;
     pnl_mat_extract_subblock(past, marketData, 0, 1, 0, marketData->n);
     hedgingPortfolio->mc_->priceAndDelta(past, t, maturity, price, std_dev, deltas, stdDeltas);
+    std::cout << "price : " << price << std::endl;
+    
     PnlVect* assetValues = pnl_vect_create(marketData->n);
     pnl_mat_get_row(assetValues, past, 0);
     double riskFreeQuantity = price - pnl_vect_scalar_prod(deltas, assetValues);
     Position* position = new Position(0, price, price, riskFreeQuantity, std_dev, deltas, stdDeltas);
     hedgingPortfolio->positions_.push_back(*position);
-    
-
+    PnlVect*  currentMarketDataRow = pnl_vect_create(marketData->n);
     for (int date = rebalancingPeriod; date < maturityInDays; date += rebalancingPeriod) {
-        
+        if (hedgingPortfolio->mc_->opt_->add(date,numberOfDaysPerYear) || (date == rebalancingPeriod) ){
+            PnlMat* newpast = pnl_mat_create(nbPastRow + 1, marketData->n);
+            pnl_mat_extract_subblock(newpast, past, 0, nbPastRow+1, 0, marketData->n);
+            pnl_mat_get_row(currentMarketDataRow, marketData, nbPastRow);
+            pnl_mat_set_row(newpast, currentMarketDataRow, nbPastRow);
+            pnl_mat_clone(past, newpast);
+            nbPastRow++; 
+        }
+        else{
+            pnl_mat_get_row(currentMarketDataRow, marketData, nbPastRow);
+            pnl_mat_set_row(past, currentMarketDataRow, nbPastRow-1);
+        }
+        pnl_mat_print(past);
         t = date / numberOfDaysPerYear;
         PnlMat* past = pnl_mat_create(date+1, marketData->n);
         pnl_mat_extract_subblock(past, marketData, 0, date+1, 0, marketData->n); //
@@ -61,7 +75,7 @@ int main(int argc, char **argv) {
             hedgingPortfolio->positions_.at((int)date / rebalancingPeriod).riskFreeQuantity * exp(model->r_ * rebalancingPeriod / numberOfDaysPerYear);
 
         hedgingPortfolio->mc_->priceAndDelta(past, t, maturity, price, std_dev, deltas, stdDeltas);
-        // nv quantité à mettre au taux sans risque
+        // nv quantitï¿½ ï¿½ mettre au taux sans risque
         double newRiskFree = pfValueBeforeRebalancing - pnl_vect_scalar_prod(deltas, assetValues);
         hedgingPortfolio->positions_.at((int)date / rebalancingPeriod).riskFreeQuantity = newRiskFree;
 

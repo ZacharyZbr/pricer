@@ -25,4 +25,5 @@ class Option
      * @return phi(trajectoire)
      */
     virtual double payoff(const PnlMat* path) = 0;
+    virtual bool add(int date, int nbOfDays) = 0;
 };

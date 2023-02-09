@@ -16,5 +16,6 @@ public:
     ForeignAsian(double T, int nbTimeSteps, vector<int> assetCurrencyMapping);
 	~ForeignAsian();
     double payoff(const PnlMat* path) override;
+	bool add(int date, int nbOfDays) override;
 
 };
