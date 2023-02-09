@@ -57,33 +57,35 @@ int main(int argc, char **argv) {
         if (hedgingPortfolio->mc_->opt_->add(date,numberOfDaysPerYear) || (date == rebalancingPeriod) ){
             PnlMat* newpast = pnl_mat_create(nbPastRow + 1, marketData->n);
             pnl_mat_extract_subblock(newpast, past, 0, nbPastRow+1, 0, marketData->n);
-            pnl_mat_get_row(currentMarketDataRow, marketData, nbPastRow);
+            pnl_mat_get_row(currentMarketDataRow, marketData, date);
             pnl_mat_set_row(newpast, currentMarketDataRow, nbPastRow);
             pnl_mat_clone(past, newpast);
             nbPastRow++; 
         }
         else{
-            pnl_mat_get_row(currentMarketDataRow, marketData, nbPastRow);
+            pnl_mat_get_row(currentMarketDataRow, marketData, date);
             pnl_mat_set_row(past, currentMarketDataRow, nbPastRow-1);
         }
         pnl_mat_print(past);
-        t = date / numberOfDaysPerYear;
+        t = (double)(date / numberOfDaysPerYear);
         PnlMat* past = pnl_mat_create(date+1, marketData->n);
         pnl_mat_extract_subblock(past, marketData, 0, date+1, 0, marketData->n); //
         pnl_mat_get_row(assetValues, past, date);
+        printf("coucou ici \n");
         double pfValueBeforeRebalancing = pnl_vect_scalar_prod(deltas, assetValues) +
-            hedgingPortfolio->positions_.at((int)date / rebalancingPeriod).riskFreeQuantity * exp(model->r_ * rebalancingPeriod / numberOfDaysPerYear);
-
+            hedgingPortfolio->positions_.at(((int)date / rebalancingPeriod)-1).riskFreeQuantity * exp(model->r_ * rebalancingPeriod / numberOfDaysPerYear);
+        printf("coucou la \n");
         hedgingPortfolio->mc_->priceAndDelta(past, t, maturity, price, std_dev, deltas, stdDeltas);
+        printf("coucou\n");
         // nv quantit� � mettre au taux sans risque
         double newRiskFree = pfValueBeforeRebalancing - pnl_vect_scalar_prod(deltas, assetValues);
-        hedgingPortfolio->positions_.at((int)date / rebalancingPeriod).riskFreeQuantity = newRiskFree;
-
+        cout<<"date :" << date << endl;
 
         Position* currentPosition = new Position(date, pfValueBeforeRebalancing, price,
                                                  newRiskFree, std_dev, deltas, stdDeltas);
 
         hedgingPortfolio->positions_.push_back(*currentPosition);
+        
 
     }
 
