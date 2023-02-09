@@ -1,21 +1,23 @@
 #include "GlobalModel.h"
 
 GlobalModel::GlobalModel(int nbCurrencies, vector<int> nbOfAssets,
-						 vector<Asset> assets, vector<Currency> currencies, double r) {
+						 vector<Asset> assets, vector<Currency> currencies, double r, double T) {
 	this->assets_ = assets;
 	this->currencies_ = currencies;
 	this->nbCurrencies_ = nbCurrencies;
 	this->nbOfAssets_ = nbOfAssets;
 	this->r_ = r;
+	this->T_ = T;
 }
 
 void GlobalModel::set(int nbCurrencies, vector<int> nbOfAssets,
-						 vector<Asset> assets, vector<Currency> currencies, double r){
+						 vector<Asset> assets, vector<Currency> currencies, double r, double T){
 	this->assets_ = assets;
 	this->currencies_ = currencies;
 	this->nbCurrencies_ = nbCurrencies;
 	this->nbOfAssets_ = nbOfAssets;
 	this->r_ = r;
+	this->T_ = T;
 }
 
 GlobalModel::GlobalModel(){
@@ -50,13 +52,13 @@ void GlobalModel::sample(PnlMat* path, PnlMat* past, double step, PnlRng* rng, d
 		//pnl_vect_set(pastSimulOfAnAsset, 0, pnl_mat_get(path, 0, i)); // set pathSimulOfAnAsset[0] = spot of the asset
 		if (idMarche == 0) {
 			PnlVect* volVector = pnl_vect_create_from_zero(assets_.size() + currencies_.size());
-			assets_.at(i).simulateT(pathSimulOfAnAsset, volVector, step, G, t, pastSimulOfAnAsset);
+			assets_.at(i).simulateT(pathSimulOfAnAsset, volVector, step, G, t, pastSimulOfAnAsset, T_);
 			pnl_mat_set_col(path, pathSimulOfAnAsset, i);
 			pnl_vect_free(&volVector);
 
 		}
 		else {
-			assets_.at(i).simulateT(pathSimulOfAnAsset, currencies_.at(idMarche-1).volatilityVector_, step, G, t, pastSimulOfAnAsset);
+			assets_.at(i).simulateT(pathSimulOfAnAsset, currencies_.at(idMarche-1).volatilityVector_, step, G, t, pastSimulOfAnAsset, T_);
 			pnl_mat_set_col(path, pathSimulOfAnAsset, i);
 		}
 	}
@@ -64,7 +66,7 @@ void GlobalModel::sample(PnlMat* path, PnlMat* past, double step, PnlRng* rng, d
 	for (int i = 0; i < currencies_.size(); i++) {
 		pnl_mat_get_col(pastSimulOfAnAsset, past, i + assets_.size());
 		//pnl_vect_set(pathSimulOfAnAsset, 0, pnl_mat_get(path, 0, i + assets_.size()));
-		currencies_.at(i).simulateT(pathSimulOfAnAsset, step, G, t, pastSimulOfAnAsset );
+		currencies_.at(i).simulateT(pathSimulOfAnAsset, step, G, t, pastSimulOfAnAsset, T_);
 		pnl_mat_set_col(path, pathSimulOfAnAsset, i + assets_.size());
 	}
 

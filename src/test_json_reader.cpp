@@ -72,13 +72,25 @@ int main(int argc, char **argv) {
     Position* position = new Position(0, price, price, riskFreeQuantity, std_dev, deltas, stdDeltas);
     hedgingPortfolio->positions_.push_back(*position);
     PnlVect*  currentMarketDataRow = pnl_vect_create(marketData->n);
-    for (int date = rebalancingPeriod; date < maturityInDays; date += rebalancingPeriod) {
-        if (hedgingPortfolio->mc_->opt_->add(date,numberOfDaysPerYear) || (date == rebalancingPeriod) ){
+    for (int date = rebalancingPeriod; date <= maturityInDays; date += rebalancingPeriod) {
+        if (hedgingPortfolio->mc_->opt_->add(date-1,numberOfDaysPerYear) || (date == rebalancingPeriod) ){
             PnlMat* newpast = pnl_mat_create(nbPastRow + 1, marketData->n);
-            pnl_mat_extract_subblock(newpast, past, 0, nbPastRow+1, 0, marketData->n);
+
+            cout << "matrice newpast" << endl;
+            pnl_mat_print(newpast);
+            cout << "matrice past" << endl;
+            pnl_mat_print(past);
+
+            pnl_mat_set_subblock(newpast, past, 0, 0);
+            cout << "matrice newpast" << endl;
+            pnl_mat_print(newpast);
+            cout << "nb ligbes newpast" << newpast->m << endl;
+
             pnl_mat_get_row(currentMarketDataRow, marketData, date);
             pnl_mat_set_row(newpast, currentMarketDataRow, nbPastRow);
             pnl_mat_clone(past, newpast);
+            cout << "verif mat past" << endl;
+            pnl_mat_print(past);
             nbPastRow++; 
             pnl_mat_free(&newpast);
         }
@@ -100,16 +112,11 @@ int main(int argc, char **argv) {
         hedgingPortfolio->positions_.push_back(*currentPosition);
         
     }
-
-    std::cout << "nsample : " << mc->nbSamples_ << std::endl;
-
-    mc->priceAndDelta(past, t, maturity, price, std_dev, deltas, stdDeltas);
-
-    std::cout << "price : " << price << std::endl;
-    //PnlMat *market = pnl_mat_create_from_file(argv[2]);
-    std::cout << "deltas : " << std::endl;
+    cout << "Prix final"<< price << endl;
+    cout << "On a fini" << endl;
+    
     pnl_vect_free(&currentMarketDataRow);
-    pnl_vect_print(deltas);
+
     pnl_vect_free(&deltas);
     pnl_vect_free(&stdDeltas);
     delete model;

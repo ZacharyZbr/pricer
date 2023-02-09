@@ -29,5 +29,5 @@ public:
 				  double step, PnlMat* G);
 
 	void simulateT(PnlVect* path, PnlVect* currencyVolatilityVector, 
-					 double step, PnlMat* G, double currentDate, PnlVect* past);
+					 double step, PnlMat* G, double currentDate, PnlVect* past, double T);
 };

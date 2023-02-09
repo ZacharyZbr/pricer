@@ -15,6 +15,7 @@ public:
 	vector<Asset> assets_; //assets of the model
 	vector<Currency> currencies_; 
 	double r_; //domestic risk free rate (redundant with asset->domesticRate but can't do it differently yet
+	double T_;
 	
 
 	/*
@@ -25,12 +26,12 @@ public:
 	* @param[in] currencies
 	*/
 	GlobalModel(int nbCurrencies, vector<int> nbOfAssets,
-				vector<Asset> assets, vector<Currency> currencies, double r);
+				vector<Asset> assets, vector<Currency> currencies, double r, double T);
 
 	GlobalModel(GlobalModel &g);
 
 	void set(int nbCurrencies, vector<int> nbOfAssets,
-						 vector<Asset> assets, vector<Currency> currencies, double r);
+						 vector<Asset> assets, vector<Currency> currencies, double r, double T);
 
 	GlobalModel();
 

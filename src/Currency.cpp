@@ -27,7 +27,7 @@ void Currency::simulate(PnlVect* path, double step, PnlMat*G)
 }
 
 void Currency::simulateT(PnlVect* path , 
-					 double step, PnlMat* G, double currentDate, PnlVect* past)
+					 double step, PnlMat* G, double currentDate, PnlVect* past, double T)
 {
 	double nextDate = 0.;
 	double spot;
@@ -37,6 +37,11 @@ void Currency::simulateT(PnlVect* path ,
 	}
 	pnl_vect_set_subblock(path, past, 0);
 	double timeGap = nextDate - currentDate;
+
+	if (currentDate == T) {
+		timeGap = 0;
+	}
+
 	PnlVect* brownian = pnl_vect_create(G->n);
 
 	if (timeGap != 0){

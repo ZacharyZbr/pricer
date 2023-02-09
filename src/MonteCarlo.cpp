@@ -66,7 +66,7 @@ void MonteCarlo::priceAndDelta(PnlMat* Past, double t, double T, double& prix, d
     // Computation of the price and its 5% confidence interval
     prix = exp(-mod_->r_ * (T - t)) * sum / nbSamples_;
     double priceVar = exp(-2 * mod_->r_ * (T - t)) * (sum_2 / nbSamples_ - (sum / nbSamples_) * (sum / nbSamples_));
-    std_dev = 1.96 * sqrt(priceVar / nbSamples_);
+    std_dev = sqrt(priceVar / nbSamples_);
 
     // Computation of the 5% confidence interval of the deltas
     pnl_vect_mult_scalar(std_deltas, exp(-2*mod_->r_ * (T - t)) / ((nbSamples_ * (2 * fdStep_)*(2 * fdStep_))));
@@ -77,7 +77,7 @@ void MonteCarlo::priceAndDelta(PnlMat* Past, double t, double T, double& prix, d
     }
     pnl_vect_minus_vect(std_deltas, deltasSquared);
     pnl_vect_map_inplace(std_deltas, sqrt);
-    pnl_vect_mult_scalar(std_deltas, 1.96 / sqrt(nbSamples_));
+    pnl_vect_mult_scalar(std_deltas, 1 / sqrt(nbSamples_));
     pnl_vect_free(&deltasSquared);
     
 }

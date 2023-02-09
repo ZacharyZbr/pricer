@@ -177,7 +177,7 @@ void parsefile(const nlohmann::json &jsonParams, GlobalModel* model, MonteCarlo*
         step = maturity;
     }
 
-    model->set(currencyNb-1, nbOfAsset, AssetVector, CurrencyVector,domesticRate );
+    model->set(currencyNb-1, nbOfAsset, AssetVector, CurrencyVector,domesticRate, maturity);
 
     PnlRng* pnl_rng = pnl_rng_create(PNL_RNG_MERSENNE);
     pnl_rng_sseed(pnl_rng, time(NULL));

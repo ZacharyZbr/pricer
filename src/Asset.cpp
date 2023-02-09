@@ -28,16 +28,22 @@ void Asset::simulate(PnlVect* path, PnlVect* currencyVolatilityVector,
 }
 
 void Asset::simulateT(PnlVect* path, PnlVect* currencyVolatilityVector, 
-					 double step, PnlMat* G, double currentDate, PnlVect* past)
+					 double step, PnlMat* G, double currentDate, PnlVect* past, double T)
 {
 	double nextDate = 0.;
 	double spot;
 	int quotient = currentDate / step;
+
 	if (currentDate != 0){
 		nextDate = quotient * step + step;
 	}
 	pnl_vect_set_subblock(path, past, 0);
 	double timeGap = nextDate - currentDate;
+
+
+	if (currentDate == T) {
+		timeGap = 0;
+	}
 
 	PnlVect* volVector = pnl_vect_copy(currencyVolatilityVector);
 	pnl_vect_plus_vect(volVector, volatilityVector_);

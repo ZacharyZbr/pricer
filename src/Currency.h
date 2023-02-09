@@ -24,6 +24,6 @@ public:
 	* @param[in] *G Normal vector that corresponds to the Brownian Motion
 	*/
 	void simulate(PnlVect* path, double step, PnlMat *G);
-	void simulateT(PnlVect* path, double step, PnlMat* G, double currentDate, PnlVect* past);
+	void simulateT(PnlVect* path, double step, PnlMat* G, double currentDate, PnlVect* past, double T);
 
 };
