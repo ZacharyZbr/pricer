@@ -8,8 +8,8 @@ Position::Position(int date, double pfValue, double price, double riskFreeQuanti
 	this->price_ = price;
 	this->riskFreeQuantity = riskFreeQuantity;
 	this->priceStdDev_ = priceStdDev;
-	this->deltas_ = deltas;
-	this->deltasStdDev_ = deltasStdDev;
+	this->deltas_ = pnl_vect_copy(deltas);
+	this->deltasStdDev_ = pnl_vect_copy(deltasStdDev);
 }
 
 

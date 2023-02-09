@@ -10,7 +10,7 @@
 #include "pnl/pnl_matrix.h"
 
 int main(int argc, char **argv) {
-    if (argc != 3) {
+    if (argc != 4) {
         std::cerr << "Wrong number of arguments. Exactly one argument is required" << std::endl;
         std::exit(0);
     }
@@ -58,39 +58,22 @@ int main(int argc, char **argv) {
     }
 
     hedgingPortfolio->mc_->priceAndDelta(past, t, maturity, price, std_dev, deltas, stdDeltas);
-    std::cout << "price : " << price << std::endl;
-    std::cout << "deltas : " << std::endl;
-    pnl_vect_print(deltas);
-    cout << "price std_dev :" <<std_dev<< endl;
-    cout << "deltas stdev" << endl;
-    pnl_vect_print(stdDeltas);
-
     
     PnlVect* assetValues = pnl_vect_create(marketData->n);
     pnl_mat_get_row(assetValues, past, 0);
     double riskFreeQuantity = price - pnl_vect_scalar_prod(deltas, assetValues);
+   
     Position* position = new Position(0, price, price, riskFreeQuantity, std_dev, deltas, stdDeltas);
+
     hedgingPortfolio->positions_.push_back(*position);
     PnlVect*  currentMarketDataRow = pnl_vect_create(marketData->n);
     for (int date = rebalancingPeriod; date <= maturityInDays; date += rebalancingPeriod) {
         if (hedgingPortfolio->mc_->opt_->add(date-1,numberOfDaysPerYear) || (date == rebalancingPeriod) ){
             PnlMat* newpast = pnl_mat_create(nbPastRow + 1, marketData->n);
-
-            cout << "matrice newpast" << endl;
-            pnl_mat_print(newpast);
-            cout << "matrice past" << endl;
-            pnl_mat_print(past);
-
             pnl_mat_set_subblock(newpast, past, 0, 0);
-            cout << "matrice newpast" << endl;
-            pnl_mat_print(newpast);
-            cout << "nb ligbes newpast" << newpast->m << endl;
-
             pnl_mat_get_row(currentMarketDataRow, marketData, date);
             pnl_mat_set_row(newpast, currentMarketDataRow, nbPastRow);
             pnl_mat_clone(past, newpast);
-            cout << "verif mat past" << endl;
-            pnl_mat_print(past);
             nbPastRow++; 
             pnl_mat_free(&newpast);
         }
@@ -99,24 +82,34 @@ int main(int argc, char **argv) {
             pnl_mat_set_row(past, currentMarketDataRow, nbPastRow-1);
         }
         t = (double)date / numberOfDaysPerYear;
+        pnl_mat_get_row(assetValues, marketData, date);
+        Position currentPosition = hedgingPortfolio->positions_.at(((int)date / rebalancingPeriod) - 1);
 
-        double pfValueBeforeRebalancing = pnl_vect_scalar_prod(deltas, assetValues) +
-            hedgingPortfolio->positions_.at(((int)date / rebalancingPeriod)-1).riskFreeQuantity * exp(model->r_ * rebalancingPeriod / numberOfDaysPerYear);
+        double pfValueBeforeRebalancing = pnl_vect_scalar_prod(currentPosition.deltas_, assetValues) +
+                          currentPosition.riskFreeQuantity * exp(model->r_ * rebalancingPeriod / numberOfDaysPerYear);
+        
         hedgingPortfolio->mc_->priceAndDelta(past, t, maturity, price, std_dev, deltas, stdDeltas);
+
+
         // nv quantit� � mettre au taux sans risque
         double newRiskFree = pfValueBeforeRebalancing - pnl_vect_scalar_prod(deltas, assetValues);
 
-        Position* currentPosition = new Position(date, pfValueBeforeRebalancing, price,
+        Position* newPosition = new Position(date, pfValueBeforeRebalancing, price,
                                                  newRiskFree, std_dev, deltas, stdDeltas);
 
-        hedgingPortfolio->positions_.push_back(*currentPosition);
+        hedgingPortfolio->positions_.push_back(*newPosition);
         
     }
-    cout << "Prix final"<< price << endl;
-    cout << "On a fini" << endl;
-    
-    pnl_vect_free(&currentMarketDataRow);
 
+    nlohmann::json jsonPortfolio = hedgingPortfolio->positions_;
+    std::ofstream ifout(argv[3], std::ios_base::out);
+    if (!ifout.is_open()) {
+        std::cout << "Unable to open file " << argv[3] << std::endl;
+        std::exit(1);
+    }
+    ifout << jsonPortfolio.dump(4);
+
+    pnl_vect_free(&currentMarketDataRow);
     pnl_vect_free(&deltas);
     pnl_vect_free(&stdDeltas);
     delete model;

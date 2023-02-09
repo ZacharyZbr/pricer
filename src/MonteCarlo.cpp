@@ -43,6 +43,8 @@ void MonteCarlo::priceAndDelta(PnlMat* Past, double t, double T, double& prix, d
     double sum_2 = 0;
     double sum_d = 0;
     double sum_d_2 = 0;
+    pnl_vect_set_zero(delta);
+    pnl_vect_set_zero(std_deltas);
     PnlMat* shiftedPathPlus = pnl_mat_create(this->opt_->nbTimeSteps_ + 1, this->mod_->nbCurrencies_ + this->mod_->assets_.size());
     PnlMat* shiftedPathMinus = pnl_mat_create(this->opt_->nbTimeSteps_ + 1, this->mod_->nbCurrencies_ + this->mod_->assets_.size());
     for (int iteration = 0; iteration < nbSamples_; iteration++) {
