@@ -78,5 +78,6 @@ void MonteCarlo::priceAndDelta(PnlMat* Past, double t, double T, double& prix, d
     pnl_vect_minus_vect(std_deltas, deltasSquared);
     pnl_vect_map_inplace(std_deltas, sqrt);
     pnl_vect_mult_scalar(std_deltas, 1.96 / sqrt(nbSamples_));
+    pnl_vect_free(&deltasSquared);
     
 }

@@ -24,10 +24,7 @@ int main(int argc, char **argv) {
     GlobalModel* model = new GlobalModel();
     MonteCarlo* mc = new MonteCarlo();
     parsefile(jsonParams, model, mc);
-    // pnl_mat_print(past);
- 
-
-    
+  
     Portfolio* hedgingPortfolio = new Portfolio(mc);
 
     PnlMat* marketData = pnl_mat_create_from_file(argv[2]);
@@ -45,10 +42,27 @@ int main(int argc, char **argv) {
     PnlMat* past = pnl_mat_create(1, marketData->n);
     int nbPastRow = 1;
     pnl_mat_extract_subblock(past, marketData, 0, 1, 0, marketData->n);
+
+    int compteur = 0;
+    for (int i = 1; i < model->nbCurrencies_ + 1; i++) {
+        compteur += model->nbOfAssets_.at(i - 1);
+        for (int j = 0; j < model->nbOfAssets_.at(i); j++) {
+            double s = pnl_mat_get(past, 0, compteur + j);
+            //std::cout << " s : " << s <<std::endl;
+            double place = std::accumulate(model->nbOfAssets_.begin(), model->nbOfAssets_.end(), 0);
+            //std::cout << " place : " << place <<std::endl;
+            double x = pnl_mat_get(past, 0, (int)place + compteur);
+            //std::cout << " x : " << x <<std::endl;
+            pnl_mat_set(past, 0, compteur + j, s * x);
+        }
+    }
+
     hedgingPortfolio->mc_->priceAndDelta(past, t, maturity, price, std_dev, deltas, stdDeltas);
     std::cout << "price : " << price << std::endl;
     std::cout << "deltas : " << std::endl;
+    pnl_vect_print(deltas);
     cout << "price std_dev :" <<std_dev<< endl;
+    cout << "deltas stdev" << endl;
     pnl_vect_print(stdDeltas);
 
     
