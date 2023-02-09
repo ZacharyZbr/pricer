@@ -40,7 +40,9 @@ void MonteCarlo::set(GlobalModel* mod, Option* opt, PnlRng* rng, double fdStep, 
 void MonteCarlo::priceAndDelta(PnlMat* Past, double t, double T, double& prix, double& std_dev,
                                PnlVect* delta, PnlVect* std_deltas){
     double sum = 0;
+    double sum_2 = 0;
     double sum_d = 0;
+    double sum_d_2 = 0;
     PnlMat* shiftedPathPlus = pnl_mat_create(this->opt_->nbTimeSteps_ + 1, this->mod_->nbCurrencies_ + this->mod_->assets_.size());
     PnlMat* shiftedPathMinus = pnl_mat_create(this->opt_->nbTimeSteps_ + 1, this->mod_->nbCurrencies_ + this->mod_->assets_.size());
     for (int iteration = 0; iteration < nbSamples_; iteration++) {
@@ -49,12 +51,32 @@ void MonteCarlo::priceAndDelta(PnlMat* Past, double t, double T, double& prix, d
             
             mod_->shiftSample(path_, shiftedPathPlus, shiftedPathMinus, fdStep_, t, step_, d);
             sum_d = (opt_->payoff(shiftedPathPlus) - opt_->payoff(shiftedPathMinus)) / pnl_mat_get(Past, (int) t/step_, d);
+            sum_d_2 = sum_d * sum_d;
             pnl_vect_set(delta, d, sum_d + pnl_vect_get(delta, d));
+            pnl_vect_set(std_deltas, d, sum_d_2 + pnl_vect_get(std_deltas, d));
         }
-        sum+=opt_->payoff(path_);
+        double payoff = opt_->payoff(path_);
+        sum += payoff;
+        sum_2 += payoff * payoff;
     }
     pnl_mat_free(&shiftedPathPlus);
     pnl_mat_free(&shiftedPathMinus);
     pnl_vect_mult_scalar(delta, (exp(-mod_->r_ * (T - t)) / (nbSamples_ * 2 * fdStep_)));
+    
+    // Computation of the price and its 5% confidence interval
     prix = exp(-mod_->r_ * (T - t)) * sum / nbSamples_;
+    double priceVar = exp(-2 * mod_->r_ * (T - t)) * (sum_2 / nbSamples_ - (sum / nbSamples_) * (sum / nbSamples_));
+    std_dev = 1.96 * sqrt(priceVar / nbSamples_);
+
+    // Computation of the 5% confidence interval of the deltas
+    pnl_vect_mult_scalar(std_deltas, exp(-2*mod_->r_ * (T - t)) / ((nbSamples_ * (2 * fdStep_)*(2 * fdStep_))));
+    PnlVect* deltasSquared = pnl_vect_copy(delta);
+    for (int d = 0; d < path_->n; d++) {
+        double delta_d = pnl_vect_get(deltasSquared, d);
+        pnl_vect_set(deltasSquared, d, delta_d * delta_d);
+    }
+    pnl_vect_minus_vect(std_deltas, deltasSquared);
+    pnl_vect_map_inplace(std_deltas, sqrt);
+    pnl_vect_mult_scalar(std_deltas, 1.96 / sqrt(nbSamples_));
+    
 }

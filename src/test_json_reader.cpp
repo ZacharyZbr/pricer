@@ -35,8 +35,10 @@ int main(int argc, char **argv) {
     double price;
     double std_dev;
     double pfValue;
-    PnlVect* deltas = pnl_vect_create(marketData->n);
-    PnlVect* stdDeltas = pnl_vect_create(marketData->n);
+    PnlVect* deltas = pnl_vect_create_from_zero(marketData->n);
+    
+    PnlVect* stdDeltas = pnl_vect_create_from_zero(marketData->n);
+
     int rebalancingPeriod = jsonParams.at("PortfolioRebalancingOracleDescription").at("Period").get<int>();
 
     double t=0.;
@@ -45,6 +47,10 @@ int main(int argc, char **argv) {
     pnl_mat_extract_subblock(past, marketData, 0, 1, 0, marketData->n);
     hedgingPortfolio->mc_->priceAndDelta(past, t, maturity, price, std_dev, deltas, stdDeltas);
     std::cout << "price : " << price << std::endl;
+    std::cout << "deltas : " << std::endl;
+    cout << "price std_dev :" <<std_dev<< endl;
+    pnl_vect_print(stdDeltas);
+
     
     PnlVect* assetValues = pnl_vect_create(marketData->n);
     pnl_mat_get_row(assetValues, past, 0);
@@ -67,26 +73,19 @@ int main(int argc, char **argv) {
             pnl_mat_set_row(past, currentMarketDataRow, nbPastRow-1);
         }
         t = (double)date / numberOfDaysPerYear;
-        cout<<"t :" << t << endl;
-
 
         double pfValueBeforeRebalancing = pnl_vect_scalar_prod(deltas, assetValues) +
             hedgingPortfolio->positions_.at(((int)date / rebalancingPeriod)-1).riskFreeQuantity * exp(model->r_ * rebalancingPeriod / numberOfDaysPerYear);
         hedgingPortfolio->mc_->priceAndDelta(past, t, maturity, price, std_dev, deltas, stdDeltas);
         // nv quantit� � mettre au taux sans risque
         double newRiskFree = pfValueBeforeRebalancing - pnl_vect_scalar_prod(deltas, assetValues);
-        cout<<"price :" << price << endl;
-        cout<<"date :" << date << endl;
-
 
         Position* currentPosition = new Position(date, pfValueBeforeRebalancing, price,
                                                  newRiskFree, std_dev, deltas, stdDeltas);
 
         hedgingPortfolio->positions_.push_back(*currentPosition);
         
-
     }
-
 
     std::cout << "nsample : " << mc->nbSamples_ << std::endl;
 
@@ -95,7 +94,7 @@ int main(int argc, char **argv) {
     std::cout << "price : " << price << std::endl;
     //PnlMat *market = pnl_mat_create_from_file(argv[2]);
     std::cout << "deltas : " << std::endl;
-   pnl_vect_free(&currentMarketDataRow);
+    pnl_vect_free(&currentMarketDataRow);
     pnl_vect_print(deltas);
     pnl_vect_free(&deltas);
     pnl_vect_free(&stdDeltas);
