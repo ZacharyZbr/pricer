@@ -23,5 +23,8 @@ double QuantoExchange::payoff(const PnlMat* path){
 };
 
 bool QuantoExchange::add(int date, int nbOfDays){
+	if (date == (int)(T_ * nbOfDays)) {
+		return true;
+	}
 	return false;
 }
