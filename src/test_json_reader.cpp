@@ -25,8 +25,6 @@ int main(int argc, char **argv) {
     MonteCarlo* mc = new MonteCarlo();
     parsefile(jsonParams, model, mc);
 
-   
-  
     Portfolio* hedgingPortfolio = new Portfolio(mc);
 
     PnlMat* marketData = pnl_mat_create_from_file(argv[2]);
@@ -44,26 +42,17 @@ int main(int argc, char **argv) {
     PnlMat* past = pnl_mat_create(1, marketData->n);
     int nbPastRow = 1;
     pnl_mat_extract_subblock(past, marketData, 0, 1, 0, marketData->n);
-    pnl_mat_print(past);
+   
     int compteur = 0;
-    //std::cout << "vector.end() : " << model->nbOfAssets_.end() << std::endl;
     double place = std::accumulate(model->nbOfAssets_.begin(), model->nbOfAssets_.end(), 0);
     for (int i = 1; i < model->nbCurrencies_ + 1; i++) {
         compteur += model->nbOfAssets_.at(i - 1);
-        //place += model->nbOfAssets_.at(i-1);
-        //std::cout << " compteur : " << compteur <<std::endl;
         for (int j = 0; j < model->nbOfAssets_.at(i); j++) {
             double s = pnl_mat_get(past, 0, compteur + j);
-            //std::cout << " s : " << s <<std::endl;
-            //std::cout << " place : " << place <<std::endl;
             double x = pnl_mat_get(past, 0, (int)place + i-1 );
-            //std::cout << " x : " << x <<std::endl;
             pnl_mat_set(past, 0, compteur + j, s * x);
         }
     }
-    //pnl_mat_print(past);
-    //mc->priceAndDelta(past, t, maturity, price, std_dev, deltas, stdDeltas);
-    //std::cout << " prix : " << price << std::endl;
     hedgingPortfolio->mc_->priceAndDelta(past, t, maturity, price, std_dev, deltas, stdDeltas);
     PnlVect* assetValues = pnl_vect_create(marketData->n);
     pnl_mat_get_row(assetValues, past, 0);
@@ -74,6 +63,8 @@ int main(int argc, char **argv) {
     hedgingPortfolio->positions_.push_back(*position);
     PnlVect*  currentMarketDataRow = pnl_vect_create(marketData->n);
     for (int date = rebalancingPeriod; date <= maturityInDays; date += rebalancingPeriod) {
+        
+
         if (hedgingPortfolio->mc_->opt_->add(date-1,numberOfDaysPerYear) || (date == rebalancingPeriod) ){
             PnlMat* newpast = pnl_mat_create(nbPastRow + 1, marketData->n);
             pnl_mat_set_subblock(newpast, past, 0, 0);
@@ -93,7 +84,6 @@ int main(int argc, char **argv) {
 
         double pfValueBeforeRebalancing = pnl_vect_scalar_prod(currentPosition.deltas_, assetValues) +
                           currentPosition.riskFreeQuantity * exp(model->r_ * rebalancingPeriod / numberOfDaysPerYear);
-        
         hedgingPortfolio->mc_->priceAndDelta(past, t, maturity, price, std_dev, deltas, stdDeltas);
 
 

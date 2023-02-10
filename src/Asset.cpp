@@ -37,9 +37,10 @@ void Asset::simulateT(PnlVect* path, PnlVect* currencyVolatilityVector,
 	if (currentDate != 0){
 		nextDate = quotient * step + step;
 	}
+	
 	pnl_vect_set_subblock(path, past, 0);
-	double timeGap = nextDate - currentDate;
 
+	double timeGap = nextDate - currentDate;
 
 	if (currentDate == T) {
 		timeGap = 0;

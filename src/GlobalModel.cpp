@@ -72,6 +72,7 @@ void GlobalModel::sample(PnlMat* path, PnlMat* past, double step, PnlRng* rng, d
 
 	pnl_vect_free(&pastSimulOfAnAsset);
 	pnl_vect_free(&pathSimulOfAnAsset);
+	pnl_mat_free(&G);
 
 	}
 

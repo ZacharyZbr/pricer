@@ -3,11 +3,13 @@
 #include "pnl/pnl_vector.h"
 #include "pnl/pnl_matrix.h"
 
-ForeignPerfBasket::ForeignPerfBasket(double T, int nbTimeSteps, vector<int> assetCurrencyMapping, double strike) {
+ForeignPerfBasket::ForeignPerfBasket(double T, int nbTimeSteps, vector<int> assetCurrencyMapping, double strike, double step) {
 	this->T_ = T;
 	this->nbTimeSteps_ = nbTimeSteps;
     this->assetCurrencyMapping_ = assetCurrencyMapping;
     this->strike_ = strike;
+    this->step_ = step;
+
 }
 
 ForeignPerfBasket::~ForeignPerfBasket(){}
@@ -64,7 +66,9 @@ double ForeignPerfBasket::payoff(const PnlMat* path){
 };
 
 bool ForeignPerfBasket::add(int date, int nbOfDays){
-    if(date % nbTimeSteps_ == 0){
+    
+    if((double)(date / nbOfDays) == step_){
+
         return true;
     }
     return false;

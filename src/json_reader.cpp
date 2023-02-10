@@ -183,7 +183,7 @@ void parsefile(const nlohmann::json &jsonParams, GlobalModel* model, MonteCarlo*
         jsonParams.at("Option").at("FixingDatesInDays").at("DatesInDays").get_to(dates);
         step = (pnl_vect_get(dates, 1) - pnl_vect_get(dates, 0)) / numberOfDaysPerYear;
         double nbTimeStep = dates->size;
-        myOption = new ForeignPerfBasket(maturity, nbTimeStep, nbOfAsset, strike);
+        myOption = new ForeignPerfBasket(maturity, nbTimeStep, nbOfAsset, strike, step);
     }
     else {
         std::cout << "On ne traite pas ce genre d'option" << std::endl;
