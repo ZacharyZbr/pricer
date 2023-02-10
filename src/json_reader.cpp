@@ -123,7 +123,7 @@ void parsefile(const nlohmann::json &jsonParams, GlobalModel* model, MonteCarlo*
     std::string label = jsonParams.at("Option").at("Type").get<std::string>();
 
     std::cout << "Beginning the hedging of the option " << label << std::endl;
-    std::cout << "Please Wait ... "  << std::endl;
+    std::cout << "Please Wait ... " << std::endl;
 
 
     Option* myOption;
