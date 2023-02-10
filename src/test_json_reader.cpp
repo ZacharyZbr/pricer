@@ -54,6 +54,7 @@ int main(int argc, char **argv) {
             pnl_mat_set(past, 0, compteur + j, s * x);
         }
     }
+
     hedgingPortfolio->mc_->priceAndDelta(past, t, maturity, price, std_dev, deltas, stdDeltas);
     PnlVect* assetValues = pnl_vect_create(marketData->n);
     pnl_mat_get_row(assetValues, past, 0);
