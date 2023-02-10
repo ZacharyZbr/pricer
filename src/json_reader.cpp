@@ -16,6 +16,7 @@
 #include "Asset.h"
 #include "pnl/pnl_vector.h"
 #include "pnl/pnl_matrix.h"
+#include "ForeignPerfBasket.h"
 
 
 void from_json(const nlohmann::json &j, PnlVect *&vect) {
@@ -175,6 +176,18 @@ void parsefile(const nlohmann::json &jsonParams, GlobalModel* model, MonteCarlo*
         double strike = jsonParams.at("Option").at("Strike").get<double>();
         myOption = new Call(maturity,1,nbOfAsset,strike);
         step = maturity;
+    }
+    else if (label == "foreign_perf_basket") {
+        double strike = jsonParams.at("Option").at("Strike").get<double>();
+        PnlVect* dates;
+        jsonParams.at("Option").at("FixingDatesInDays").at("DatesInDays").get_to(dates);
+        step = (pnl_vect_get(dates, 1) - pnl_vect_get(dates, 0)) / numberOfDaysPerYear;
+        double nbTimeStep = dates->size;
+        myOption = new ForeignPerfBasket(maturity, nbTimeStep, nbOfAsset, strike);
+    }
+    else {
+        std::cout << "On ne traite pas ce genre d'option" << std::endl;
+        abort();
     }
 
     model->set(currencyNb-1, nbOfAsset, AssetVector, CurrencyVector,domesticRate, maturity);

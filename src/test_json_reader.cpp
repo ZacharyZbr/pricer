@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
     for (int i = 1; i < model->nbCurrencies_ + 1; i++) {
         compteur += model->nbOfAssets_.at(i - 1);
         //place += model->nbOfAssets_.at(i-1);
-        std::cout << " compteur : " << compteur <<std::endl;
+        //std::cout << " compteur : " << compteur <<std::endl;
         for (int j = 0; j < model->nbOfAssets_.at(i); j++) {
             double s = pnl_mat_get(past, 0, compteur + j);
             //std::cout << " s : " << s <<std::endl;
