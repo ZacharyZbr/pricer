@@ -16,18 +16,18 @@ ForeignPerfBasket::~ForeignPerfBasket(){}
 
 double ForeignPerfBasket::payoff(const PnlMat* path){
     // calcul du Pmax
-    //std::cout << " debut : " << std::endl;
+    //std::cout << " path : " << std::endl;
     //pnl_mat_print(path);
     //std::cout << " size : " << this->assetCurrencyMapping_.size()<< std::endl;
     int place = 0;
     PnlVect *Pi = pnl_vect_create_from_zero(this->assetCurrencyMapping_.size()-1);
-    
-    for (int i = 1; i<this->assetCurrencyMapping_.size(); i++){ //on itere sur chaque marché
+    //std::cout << " aaaa : " << this->assetCurrencyMapping_.size() - 1<< std::endl;
+    for (int i = 0; i<this->assetCurrencyMapping_.size()-1; i++){ //on itere sur chaque marché
         double sumT2 =0.;
         double sumT1 =0.;
-        place += assetCurrencyMapping_.at(i-1);
+        place += assetCurrencyMapping_.at(i);
         //std::cout << " i : " << i << std::endl;
-        for(int j =0; j<this->assetCurrencyMapping_.at(i); j++){ //pour chaque marché, o, somme le prix des asset
+        for(int j =0; j<this->assetCurrencyMapping_.at(i+1); j++){ //pour chaque marché, o, somme le prix des asset
             //std::cout << " j : " << j << std::endl;
             //std::cout << " path->n : " << path->m << std::endl;
             //pnl_mat_print(path);
@@ -41,7 +41,8 @@ double ForeignPerfBasket::payoff(const PnlMat* path){
        // std::cout << " i - 1 : " << i-1 << std::endl;
         //std::cout << " size pi : " << Pi->size<< std::endl;
         //pnl_vect_print(Pi);
-        pnl_vect_set(Pi, sumT2/sumT1, i-1);
+        
+        pnl_vect_set(Pi, i, sumT2/sumT1);
     }
     //std::cout << " fin 2 : " << std::endl;
     //std::cout << " Pi : "  << std::endl;
@@ -53,6 +54,16 @@ double ForeignPerfBasket::payoff(const PnlMat* path){
     int *PmaxIndex = &init2;
     //std::cout << " PmaxIndex avant : " << *PmaxIndex << std::endl;
     pnl_vect_max_index(Pmax, PmaxIndex, Pi); // on trouve Pmax et NiMax l'indice du marché max
+    // double max = pnl_vect_get(Pi, 0);
+    // int indice = 0;
+    // for (int i =1; i< Pi->size; i++){
+    //     double valeur = pnl_vect_get(Pi, i);
+    //     if (valeur > max){
+    //         max = valeur;
+    //         indice = i;
+    //     }
+    // }
+
    //std::cout << " apres " << std::endl;
     //std::cout << " PmaxIndex apres : " << *PmaxIndex << std::endl;
     pnl_vect_free(&Pi);
