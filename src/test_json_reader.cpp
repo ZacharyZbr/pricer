@@ -53,9 +53,9 @@ int main(int argc, char **argv) {
 
     double t=0.;
     PnlMat* past = pnl_mat_create(1, marketData->n);
+    
     int nbPastRow = 1;
     pnl_mat_extract_subblock(past, marketData, 0, 1, 0, marketData->n);
-   
     
     hedgingPortfolio->mc_->priceAndDelta(past, t, maturity, price, std_dev, deltas, stdDeltas);
     PnlVect* assetValues = pnl_vect_create(marketData->n);
@@ -69,11 +69,13 @@ int main(int argc, char **argv) {
     for (int date = rebalancingPeriod; date <= maturityInDays; date += rebalancingPeriod) {
         
 
-        if (hedgingPortfolio->mc_->opt_->add(date-1,numberOfDaysPerYear) || (date == rebalancingPeriod) ){
+        if (hedgingPortfolio->mc_->opt_->add(date,numberOfDaysPerYear) || (date == rebalancingPeriod) ){
             PnlMat* newpast = pnl_mat_create(nbPastRow + 1, marketData->n);
             pnl_mat_set_subblock(newpast, past, 0, 0);
             pnl_mat_get_row(currentMarketDataRow, marketData, date);
             pnl_mat_set_row(newpast, currentMarketDataRow, nbPastRow);
+            if (date != rebalancingPeriod)
+                pnl_mat_set_row(newpast, currentMarketDataRow, nbPastRow-1);
             pnl_mat_clone(past, newpast);
             nbPastRow++; 
             pnl_mat_free(&newpast);
