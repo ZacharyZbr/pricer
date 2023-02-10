@@ -33,7 +33,6 @@ bool ForeignAsian::add(int date, int nbOfDays){
     double s = ((double)date / nbOfDays) / step_;
     double diff = (int)s - s;
     if(abs(diff)<0.0001){
-        std::cout << "ici" << std::endl;
         return true;
     }
     return false;
