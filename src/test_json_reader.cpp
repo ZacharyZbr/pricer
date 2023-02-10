@@ -42,8 +42,6 @@ int main(int argc, char **argv) {
         }
     }
 
-    pnl_mat_print(marketData)
-;
     double price;
     double std_dev;
     double pfValue;

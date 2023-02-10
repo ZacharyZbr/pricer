@@ -135,7 +135,7 @@ void parsefile(const nlohmann::json &jsonParams, GlobalModel* model, MonteCarlo*
         double period = jsonParams.at("Option").at("FixingDatesInDays").at("Period").get<double>();
         step = period/numberOfDaysPerYear;
         double nbTimeStep = jsonParams.at("Option").at("MaturityInDays").get<double>()/period;
-        myOption = new ForeignAsian(maturity,nbTimeStep,nbOfAsset);
+        myOption = new ForeignAsian(maturity,nbTimeStep,nbOfAsset, step);
     }
     else if(label == "call_currency"){
         double strike = jsonParams.at("Option").at("Strike").get<double>();
