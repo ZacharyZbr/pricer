@@ -50,24 +50,16 @@ void from_json(const nlohmann::json &j, PnlMat *&mat) {
 void parsefile(const nlohmann::json &jsonParams, GlobalModel* model, MonteCarlo* mc){
     PnlMat *correlation;
     jsonParams.at("Correlations").get_to(correlation);
-    std::cout << "Matrice de Correlation : " << std::endl;
-    pnl_mat_print(correlation);
 
     // Matrice de cholesky
-    std::cout << "Matrice de cholesky : "  << std::endl;
-    pnl_mat_chol(correlation);
-    pnl_mat_print(correlation);
 
     std::string domesticCurrencyId;
     jsonParams.at("DomesticCurrencyId").get_to(domesticCurrencyId);
-    std::cout << "Domestic ID : " << domesticCurrencyId << std::endl;
-    int assetNb = jsonParams.at("Assets").size();
-    std::cout << "Number of assets " << assetNb << std::endl;
 
-    std::cout << "-- currencies" << std::endl;
+    int assetNb = jsonParams.at("Assets").size();
+
     auto jsonCurrencies = jsonParams.at("Currencies");
     int currencyNb = jsonCurrencies.size();
-    std::cout << "Number of currency " << currencyNb << std::endl;
     double domesticRate = 0;
     double indiceCurrency = 0;
     vector<Currency> CurrencyVector; 
@@ -84,8 +76,6 @@ void parsefile(const nlohmann::json &jsonParams, GlobalModel* model, MonteCarlo*
             pnl_mat_get_row(volatilityVector, correlation, correlation->m - currencyNb + indiceCurrency);
             std::string currencyId(jsonCurrency.at("id").get<std::string>());
             double realVolatility = jsonCurrency.at("Volatility").get<double>();
-            std::cout << "interest rate " << rf << std::endl;
-            std::cout << "real volatility " << realVolatility << std::endl;
             pnl_vect_mult_scalar(volatilityVector,realVolatility);
             Currency* myCurrency = new Currency(domesticRate, volatilityVector, domesticRate, rf);
             CurrencyVector.push_back(*myCurrency);
@@ -98,10 +88,6 @@ void parsefile(const nlohmann::json &jsonParams, GlobalModel* model, MonteCarlo*
         CurrencyVector.at(i).domesticInterestRate_ = domesticRate;
     }
 
-    std::cout << "domestic interest rate " << domesticRate << std::endl;
-
-    std::cout << "-- assets" << std::endl;
-
     vector<Asset> AssetVector; 
     auto jsonAssets = jsonParams.at("Assets");
     double indiceAsset = 0;
@@ -110,7 +96,7 @@ void parsefile(const nlohmann::json &jsonParams, GlobalModel* model, MonteCarlo*
         nbOfAsset.push_back(0);
     }
     //nbOfAsset.at(0)++;
-    //std::cout << " test " <<  nbOfAsset.at(0) << std::endl;
+
     string currentCurrency = domesticCurrencyId;
     int currentindiceOfAsset = 0;
     for (auto jsonAsset : jsonAssets) {
@@ -119,8 +105,6 @@ void parsefile(const nlohmann::json &jsonParams, GlobalModel* model, MonteCarlo*
         pnl_mat_get_row(volatilityVector, correlation, indiceAsset -1 );
         std::string currencyId(jsonAsset.at("CurrencyId").get<std::string>());
         double realVolatility = jsonAsset.at("Volatility").get<double>();
-        std::cout << "currency " << currencyId << std::endl;
-        std::cout << "real volatility " << realVolatility << std::endl;
         pnl_vect_mult_scalar(volatilityVector,realVolatility);
         Asset* myAsset= new Asset(domesticRate, volatilityVector, domesticRate);
         AssetVector.push_back(*myAsset);
@@ -134,16 +118,13 @@ void parsefile(const nlohmann::json &jsonParams, GlobalModel* model, MonteCarlo*
         }
     }
 
-    for(int i=0; i<currencyNb; i++){
-        std::cout << " Nombre d'asset par devise " <<  nbOfAsset.at(i) << std::endl;
-    }
-
     int numberOfDaysPerYear = jsonParams.at("NumberOfDaysInOneYear").get<int>();
     double maturity = jsonParams.at("Option").at("MaturityInDays").get<int>() / double (numberOfDaysPerYear);
     std::string label = jsonParams.at("Option").at("Type").get<std::string>();
-    std::cout << "Type option : " << label << std::endl;
-    std::cout << "Maturité : " << maturity << std::endl;
-    std::cout << "numberOfDaysPerYear : " << numberOfDaysPerYear << std::endl;
+
+    std::cout << "Beginning the hedging of the option " << label << std::endl;
+    std::cout << "Please Wait ... "  << std::endl;
+
 
     Option* myOption;
     double step;
@@ -183,7 +164,7 @@ void parsefile(const nlohmann::json &jsonParams, GlobalModel* model, MonteCarlo*
         jsonParams.at("Option").at("FixingDatesInDays").at("DatesInDays").get_to(dates);
         step = (pnl_vect_get(dates, 1) - pnl_vect_get(dates, 0)) / numberOfDaysPerYear;
         double nbTimeStep = dates->size;
-        myOption = new ForeignPerfBasket(maturity, nbTimeStep, nbOfAsset, strike, step);
+        myOption = new ForeignPerfBasket(maturity, nbTimeStep-1, nbOfAsset, strike, step);
     }
     else {
         std::cout << "On ne traite pas ce genre d'option" << std::endl;

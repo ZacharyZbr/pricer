@@ -16,6 +16,7 @@ int main(int argc, char **argv) {
     }
     std::ifstream ifs(argv[1]);
 
+
     nlohmann::json jsonParams = nlohmann::json::parse(ifs);
     int numberOfDaysPerYear = jsonParams.at("NumberOfDaysInOneYear").get<int>();
     double maturityInDays = jsonParams.at("Option").at("MaturityInDays").get<int>();
@@ -94,8 +95,9 @@ int main(int argc, char **argv) {
                                                  newRiskFree, std_dev, deltas, stdDeltas);
 
         hedgingPortfolio->positions_.push_back(*newPosition);
-        
     }
+
+    
 
     nlohmann::json jsonPortfolio = hedgingPortfolio->positions_;
     std::ofstream ifout(argv[3], std::ios_base::out);
@@ -105,6 +107,10 @@ int main(int argc, char **argv) {
     }
     ifout << jsonPortfolio.dump(4);
     ifout.close();
+
+
+   
+    std::cout << "Backtesting is over, please see the results in the file " << argv[3] << std::endl;
 
     pnl_vect_free(&currentMarketDataRow);
     pnl_vect_free(&deltas);
