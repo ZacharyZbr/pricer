@@ -41,7 +41,7 @@ double ForeignPerfBasket::payoff(const PnlMat* path){
        // std::cout << " i - 1 : " << i-1 << std::endl;
         //std::cout << " size pi : " << Pi->size<< std::endl;
         //pnl_vect_print(Pi);
-        pnl_vect_set(Pi, sumT2/sumT1, i-1);
+        pnl_vect_set(Pi,i-1,sumT2/sumT1);
     }
     //std::cout << " fin 2 : " << std::endl;
     //std::cout << " Pi : "  << std::endl;
