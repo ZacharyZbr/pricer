@@ -14,4 +14,8 @@ Position::Position(int date, double pfValue, double price, double riskFreeQuanti
 
 }
 
+void Position::print() const {
+	nlohmann::json j = *this;
+	std::cout << j.dump(4);
+}
 
