@@ -114,6 +114,7 @@ int main(int argc, char **argv) {
         std::exit(1);
     }
     ifout << jsonPortfolio.dump(4);
+    ifout.close();
 
     pnl_vect_free(&currentMarketDataRow);
     pnl_vect_free(&deltas);
