@@ -62,9 +62,9 @@ int main(int argc, char **argv) {
         }
     }
     //pnl_mat_print(past);
-
+    //mc->priceAndDelta(past, t, maturity, price, std_dev, deltas, stdDeltas);
+    //std::cout << " prix : " << price << std::endl;
     hedgingPortfolio->mc_->priceAndDelta(past, t, maturity, price, std_dev, deltas, stdDeltas);
-    
     PnlVect* assetValues = pnl_vect_create(marketData->n);
     pnl_mat_get_row(assetValues, past, 0);
     double riskFreeQuantity = price - pnl_vect_scalar_prod(deltas, assetValues);
