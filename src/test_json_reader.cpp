@@ -29,7 +29,21 @@ int main(int argc, char **argv) {
     Portfolio* hedgingPortfolio = new Portfolio(mc);
 
     PnlMat* marketData = pnl_mat_create_from_file(argv[2]);
+    for(int row =0; row<marketData->m; row++){
+        int compteur = 0;
+        double place = std::accumulate(model->nbOfAssets_.begin(), model->nbOfAssets_.end(), 0);
+        for (int i = 1; i < model->nbCurrencies_ + 1; i++) {
+            compteur += model->nbOfAssets_.at(i - 1);
+            for (int j = 0; j < model->nbOfAssets_.at(i); j++) {
+                double s = pnl_mat_get(marketData, row, compteur + j);
+                double x = pnl_mat_get(marketData, row, (int)place + i-1 );
+                pnl_mat_set(marketData, row, compteur + j, s * x);
+            }
+        }
+    }
 
+    pnl_mat_print(marketData)
+;
     double price;
     double std_dev;
     double pfValue;
@@ -44,17 +58,7 @@ int main(int argc, char **argv) {
     int nbPastRow = 1;
     pnl_mat_extract_subblock(past, marketData, 0, 1, 0, marketData->n);
    
-    int compteur = 0;
-    double place = std::accumulate(model->nbOfAssets_.begin(), model->nbOfAssets_.end(), 0);
-    for (int i = 1; i < model->nbCurrencies_ + 1; i++) {
-        compteur += model->nbOfAssets_.at(i - 1);
-        for (int j = 0; j < model->nbOfAssets_.at(i); j++) {
-            double s = pnl_mat_get(past, 0, compteur + j);
-            double x = pnl_mat_get(past, 0, (int)place + i-1 );
-            pnl_mat_set(past, 0, compteur + j, s * x);
-        }
-    }
-
+    
     hedgingPortfolio->mc_->priceAndDelta(past, t, maturity, price, std_dev, deltas, stdDeltas);
     PnlVect* assetValues = pnl_vect_create(marketData->n);
     pnl_mat_get_row(assetValues, past, 0);

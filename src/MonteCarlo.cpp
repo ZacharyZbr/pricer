@@ -55,7 +55,7 @@ void MonteCarlo::priceAndDelta(PnlMat* Past, double t, double T, double& prix, d
         for (int d = 0; d < path_->n; d++) {
             
             mod_->shiftSample(path_, shiftedPathPlus, shiftedPathMinus, fdStep_, t, step_, d);
-            sum_d = (opt_->payoff(shiftedPathPlus) - opt_->payoff(shiftedPathMinus)) / pnl_mat_get(Past, (int) t/step_, d);
+            sum_d = (opt_->payoff(shiftedPathPlus) - opt_->payoff(shiftedPathMinus)) / pnl_mat_get(Past, Past->m-1, d);
             sum_d_2 = sum_d * sum_d;
             pnl_vect_set(delta, d, sum_d + pnl_vect_get(delta, d));
             pnl_vect_set(std_deltas, d, sum_d_2 + pnl_vect_get(std_deltas, d));
