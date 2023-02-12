@@ -67,9 +67,9 @@ Few words about delta hedging.
 ## Multi currency
 
 Let's consier a multicurrency market that contains 1 domestic currency and $\hat{n} \in \mathbb{N}$ foreign currencies. Each market contains : 
-* $n_{i}$ risky assets $(S^{i, 1}, ..., S^{i, n_{i}})$ and an exchange rate $X_{i}$ with the domestic market $(\forall i \in \mathbb{N}^{*})$. 
+* $n_{i}$ risky assets $(S^{i, 1}, ..., S^{i, n_{i}})$ and an exchange rate $X_{i}$ with the domestic market $(\forall 1 \leq i \leq \hat{n})$. 
 * The domestic market contains $n_{0}$ risky assets $(S^{0, 1}, ..., S^{i, n_{0}})$ 
 
-The mapping between the all the markets and the number of risky assets they have is represented by a vector of size $\sum_{l=0}^{\hat{n}}n_{l} \ N = (n_{0}, n_{1}, ..., n_{\hat{n}})$.
+The mapping between the all the markets and the number of risky assets they have is represented by a vector of size $\sum _{l=0}^{\hat{n}}n_{l} \ N = (n_{0}, n_{1}, ..., n_{\hat{n}})$.
 
 ## Longstoff algorithm
