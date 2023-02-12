@@ -27,7 +27,7 @@ Then ```make``` and the multi-currency pricing library will build two executable
 #### On Windows
 I suggest to use the IDE visual studio and the cmake-gui. Firstly, copy and paste the CMakeLists.txt from \CMake\windows to the root of the project directory. Then : 
 
-1. Donwload the pnl-lib here https://github.com/pnlnum/pnl/releases and open cmake-gui. 
+1. Download the pnl-lib here https://github.com/pnlnum/pnl/releases and open cmake-gui. 
 * In the "Where is the source file" section, be sure to enter the path to the root of the project where there is the CmakeLists.txt.
 * Click on "+ Add Entry" and a window will pop up and enter in the sections 
     - **Name**>CMAKE_PREFIX_PATH 
@@ -60,7 +60,16 @@ One can find some examples of the input parameter in the \data directory.
 ```
 .\pricer_am.exe "path to option_params.json" 
 ```
+## Delta hedging
+
+Few words about delta hedging. 
 
 ## Multi currency
+
+Let's consier a multicurrency market that contains 1 domestic currency and $\hat(n) \in \mathbb{N}$ foreign currencies. Each market contains : 
+* $n_{i}$ risky assets $(S^{i, 1}, ..., S^{i, n_{i}})$ and an exchange rate $X_{i}$ with the domestic market ($\forall i in \mathbb{N}^{*}$). 
+* The domestic market contains $n_{0}$ risky assets $(S^{0, 1}, ..., S^{i, n_{0}})$ 
+
+The mapping between the all the markets and the number of risky assets they have is represented by a vector of size $\sum_{l=0}^{\hat(n)}n_{l} \ N = (n_{0}, n_{1}, ..., n_{\hat{n}})$.
 
 ## Longstoff algorithm
