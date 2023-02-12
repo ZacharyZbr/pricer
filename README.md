@@ -75,6 +75,8 @@ The mapping between the all the markets and the number of risky assets they have
 $$dS_{t}^{i, l} = S^{i,l} \times (\mu^{i,l}dt + \sigma^{i,l}dW_{t}^{i,l}) \ i \in {0, ..., \hat{n}}, \ l \in {1, ..., n_{i}}$$
 $$dX_{t}^{i} = X_{t}^{i} \times (\mu^{i,X}dt + \sigma^{i,X}dW_{t}^{i,X}) \ i \in {1, ..., \hat{n}}$$
 
-The correlation matrix for the brownian motion is $(\tilde{S}, \tilde{X})$ with $\tilde{X} = (X^{1}, ... X^{\hat{n}})$ and $\tilde{S} = (S^{0,1}, ..., S^{0, n_{0}}, ...,S^{0,1}, ..., S^{0, n_{\hat{n}}})$ 
+The correlation matrix for the brownian motion is $\Gamma$ the correlation matrix of $(\tilde{S}, \tilde{X})$ with $\tilde{X} = (X^{1}, ... X^{\hat{n}})$ and $\tilde{S} = (S^{0,1}, ..., S^{0, n_{0}}, ...,S^{0,1}, ..., S^{0, n_{\hat{n}}})$. 
+
+To be able to pricer the different option the strategy is to rewrite all the dynamics in the domestic market. Let's denote $W$ of Brownian motion of dimension $\sum_{i=0}^{\hat{n}}$. 
 
 ## Longstoff algorithm
