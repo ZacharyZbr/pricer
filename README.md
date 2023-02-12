@@ -67,10 +67,14 @@ Few words about delta hedging.
 ## Multi currency
 
 Let's consier a multicurrency market that contains 1 domestic currency and $\hat{n} \in \mathbb{N}$ foreign currencies. Each market contains : 
-* $n_{i}$ risky assets $(S^{i, 1}, ..., S^{i, n_{i}})$ and an exchange rate $X_{i}$ with the domestic market $(\forall 1 \leq i \leq \hat{n})$. 
+* $n_{i}$ risky assets $(S^{i, 1}, ..., S^{i, n_{i}})$ and an exchange rate $X^{i}$ with the domestic market $(\forall 1 \leq i \leq \hat{n})$. 
 * The domestic market contains $n_{0}$ risky assets $(S^{0, 1}, ..., S^{i, n_{0}})$ 
 * One risk free rate $r^{i} \ \forall 1 \leq i \leq \hat{n}$
 
-The mapping between the all the markets and the number of risky assets they have is represented by a vector $N = (n_{0}, n_{1}, ..., n_{\hat{n}})$.
+The mapping between the all the markets and the number of risky assets they have is represented by a vector $N = (n_{0}, n_{1}, ..., n_{\hat{n}})$. The dynamics of the different risky assets are the followings : 
+$$
+\frac{dS_{t}^{i, l} = S^{i,l} \times (\mu^{i,l}dt + \sigma^{i,l}dW_{t}^{i,l}) \ i \in {0, ..., \hat{n}}, \ l \in {0, ..., n_{i}} \\ 
+\frac{dX_{t}^{i} = X_{t}^{i} \times (\mu^{i,X}dt + \sigma^{i,X}dW_{t}^{i,X}) \ i \in {1, ..., \hat{n}}
+$$
 
 ## Longstoff algorithm
